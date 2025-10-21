@@ -1,0 +1,21 @@
+name: Bug report
+description: Melde einen Fehler
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    attributes:
+      label: Beschreibung
+      description: Was ist das Problem?
+  - type: textarea
+    attributes:
+      label: Steps to Reproduce
+      description: Wie kann der Fehler reproduziert werden?
+  - type: textarea
+    attributes:
+      label: Erwartet
+      description: Was war das erwartete Verhalten?
+  - type: textarea
+    attributes:
+      label: Logs/Screenshots
+      description: Relevante Logs oder Screenshots

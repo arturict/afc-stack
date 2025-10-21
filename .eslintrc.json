@@ -1,0 +1,5 @@
+{
+    "root": true,
+    "extends": ["next/core-web-vitals"],
+    "parserOptions": { "project": ["./tsconfig.base.json"] }
+}
