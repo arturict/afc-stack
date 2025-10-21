@@ -1,0 +1,18 @@
+{
+  "name": "Stack Template",
+  "description": "Production-ready full-stack monorepo with interactive CLI for custom stack generation",
+  "homepageUrl": "https://github.com/YOUR-USERNAME/stack-template",
+  "tags": [
+    "nextjs",
+    "typescript",
+    "monorepo",
+    "turborepo",
+    "drizzle",
+    "postgresql",
+    "nextauth",
+    "tailwind",
+    "websocket",
+    "template",
+    "starter"
+  ]
+}
