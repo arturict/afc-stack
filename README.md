@@ -18,6 +18,7 @@ bun run create
 ```
 
 The modern CLI lets you choose exactly what you need:
+
 - **Language**: TypeScript or JavaScript
 - **Package Manager**: Bun, pnpm, or npm
 - **Database**: PostgreSQL, MySQL, SQLite, or none
@@ -67,38 +68,43 @@ afc-stack/
 ### Setup
 
 1. **Clone and install dependencies**
-   ```bash
-   git clone <your-repo>
-   cd afc-stack
-   bun install
-   ```
+
+    ```bash
+    git clone <your-repo>
+    cd afc-stack
+    bun install
+    ```
 
 2. **Start local services (Postgres + MinIO)**
-   ```bash
-   docker compose -f compose.dev.yml up -d
-   ```
+
+    ```bash
+    docker compose -f compose.dev.yml up -d
+    ```
 
 3. **Configure environment**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your values
-   ```
+
+    ```bash
+    cp .env.example .env
+    # Edit .env with your values
+    ```
 
 4. **Run migrations**
-   ```bash
-   bunx drizzle-kit generate
-   bunx drizzle-kit migrate
-   ```
+
+    ```bash
+    bunx drizzle-kit generate
+    bunx drizzle-kit migrate
+    ```
 
 5. **Start dev servers**
-   ```bash
-   bun run dev
-   ```
 
-   This starts:
-   - Web: http://localhost:3000
-   - WebSocket: ws://localhost:4001
-   - MinIO Console: http://localhost:9001
+    ```bash
+    bun run dev
+    ```
+
+    This starts:
+    - Web: http://localhost:3000
+    - WebSocket: ws://localhost:4001
+    - MinIO Console: http://localhost:9001
 
 ### Create MinIO Bucket
 
@@ -111,14 +117,14 @@ afc-stack/
 ### Coolify Setup
 
 1. **Database**: Create PostgreSQL instance
-2. **Web App**: 
-   - Dockerfile: `apps/web/Dockerfile`
-   - Port: 3000
-   - Add environment variables from `.env.example`
+2. **Web App**:
+    - Dockerfile: `apps/web/Dockerfile`
+    - Port: 3000
+    - Add environment variables from `.env.example`
 3. **WebSocket Service**:
-   - Dockerfile: `apps/ws/Dockerfile`
-   - Port: 4001
-   - Enable WebSocket proxy
+    - Dockerfile: `apps/ws/Dockerfile`
+    - Port: 4001
+    - Enable WebSocket proxy
 
 ### GitHub Secrets
 
@@ -187,6 +193,7 @@ See `.env.example` for all available options. Key variables:
 ### Authentication
 
 NextAuth v5 with Drizzle adapter. Supports:
+
 - Email magic links (via Resend)
 - GitHub OAuth
 - Google OAuth

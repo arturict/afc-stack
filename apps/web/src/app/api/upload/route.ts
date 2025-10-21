@@ -6,7 +6,7 @@ export async function POST(req: Request) {
     if (!(file instanceof File)) {
         return new Response("No file", { status: 400 });
     }
-    const { uploadFile } = await import("../../storage");
+    const { uploadFile } = await import("../../../storage");
     const res = await uploadFile(file);
     return new Response(JSON.stringify(res), { status: 201, headers: { "content-type": "application/json" } });
 }

@@ -39,18 +39,17 @@ async function main() {
                     placeholder: "my-app",
                     validate: (value) => {
                         if (!value) return "Please enter a project name";
-                        if (!/^[a-z0-9-]+$/.test(value))
-                            return "Only lowercase letters, numbers, and hyphens allowed";
-                    },
+                        if (!/^[a-z0-9-]+$/.test(value)) return "Only lowercase letters, numbers, and hyphens allowed";
+                    }
                 }),
             language: () =>
                 p.select({
                     message: "Language",
                     options: [
                         { value: "typescript", label: "TypeScript", hint: "recommended" },
-                        { value: "javascript", label: "JavaScript" },
+                        { value: "javascript", label: "JavaScript" }
                     ],
-                    initialValue: "typescript" as const,
+                    initialValue: "typescript" as const
                 }),
             packageManager: () =>
                 p.select({
@@ -58,14 +57,14 @@ async function main() {
                     options: [
                         { value: "bun", label: "Bun", hint: "recommended" },
                         { value: "pnpm", label: "pnpm" },
-                        { value: "npm", label: "npm" },
+                        { value: "npm", label: "npm" }
                     ],
-                    initialValue: "bun" as const,
+                    initialValue: "bun" as const
                 }),
             monorepo: () =>
                 p.confirm({
                     message: "Use monorepo structure?",
-                    initialValue: true,
+                    initialValue: true
                 }),
             database: () =>
                 p.select({
@@ -74,9 +73,9 @@ async function main() {
                         { value: "postgres", label: "PostgreSQL", hint: "recommended" },
                         { value: "mysql", label: "MySQL" },
                         { value: "sqlite", label: "SQLite" },
-                        { value: "none", label: "None" },
+                        { value: "none", label: "None" }
                     ],
-                    initialValue: "postgres" as const,
+                    initialValue: "postgres" as const
                 }),
             orm: ({ results }) =>
                 results.database !== "none"
@@ -85,9 +84,9 @@ async function main() {
                           options: [
                               { value: "drizzle", label: "Drizzle ORM", hint: "recommended" },
                               { value: "prisma", label: "Prisma" },
-                              { value: "none", label: "None" },
+                              { value: "none", label: "None" }
                           ],
-                          initialValue: "drizzle" as const,
+                          initialValue: "drizzle" as const
                       })
                     : Promise.resolve("none" as const),
             auth: () =>
@@ -97,9 +96,9 @@ async function main() {
                         { value: "nextauth", label: "NextAuth v5", hint: "recommended" },
                         { value: "lucia", label: "Lucia" },
                         { value: "clerk", label: "Clerk" },
-                        { value: "none", label: "None" },
+                        { value: "none", label: "None" }
                     ],
-                    initialValue: "nextauth" as const,
+                    initialValue: "nextauth" as const
                 }),
             styling: () =>
                 p.select({
@@ -107,9 +106,9 @@ async function main() {
                     options: [
                         { value: "tailwind", label: "Tailwind CSS", hint: "recommended" },
                         { value: "shadcn", label: "shadcn/ui + Tailwind" },
-                        { value: "none", label: "None" },
+                        { value: "none", label: "None" }
                     ],
-                    initialValue: "tailwind" as const,
+                    initialValue: "tailwind" as const
                 }),
             realtime: () =>
                 p.select({
@@ -117,9 +116,9 @@ async function main() {
                     options: [
                         { value: "websocket", label: "WebSocket (Fastify)", hint: "recommended" },
                         { value: "sse", label: "Server-Sent Events" },
-                        { value: "none", label: "None" },
+                        { value: "none", label: "None" }
                     ],
-                    initialValue: "websocket" as const,
+                    initialValue: "websocket" as const
                 }),
             storage: () =>
                 p.select({
@@ -128,9 +127,9 @@ async function main() {
                         { value: "minio", label: "MinIO (dev) / S3 (prod)", hint: "recommended" },
                         { value: "uploadthing", label: "UploadThing" },
                         { value: "s3", label: "AWS S3 only" },
-                        { value: "none", label: "None" },
+                        { value: "none", label: "None" }
                     ],
-                    initialValue: "minio" as const,
+                    initialValue: "minio" as const
                 }),
             analytics: () =>
                 p.select({
@@ -139,9 +138,9 @@ async function main() {
                         { value: "posthog", label: "PostHog", hint: "recommended" },
                         { value: "plausible", label: "Plausible" },
                         { value: "umami", label: "Umami" },
-                        { value: "none", label: "None" },
+                        { value: "none", label: "None" }
                     ],
-                    initialValue: "posthog" as const,
+                    initialValue: "posthog" as const
                 }),
             ratelimit: () =>
                 p.select({
@@ -150,9 +149,9 @@ async function main() {
                         { value: "arcjet", label: "Arcjet", hint: "recommended" },
                         { value: "upstash", label: "Upstash" },
                         { value: "unkey", label: "Unkey" },
-                        { value: "none", label: "None" },
+                        { value: "none", label: "None" }
                     ],
-                    initialValue: "arcjet" as const,
+                    initialValue: "arcjet" as const
                 }),
             deployment: () =>
                 p.select({
@@ -161,28 +160,28 @@ async function main() {
                         { value: "coolify", label: "Coolify", hint: "recommended" },
                         { value: "vercel", label: "Vercel" },
                         { value: "railway", label: "Railway" },
-                        { value: "none", label: "None" },
+                        { value: "none", label: "None" }
                     ],
-                    initialValue: "coolify" as const,
+                    initialValue: "coolify" as const
                 }),
             cicd: () =>
                 p.confirm({
                     message: "Include CI/CD (GitHub Actions)?",
-                    initialValue: true,
+                    initialValue: true
                 }),
             docker: ({ results }) =>
                 results.deployment === "coolify" || results.deployment === "railway"
                     ? p.confirm({
                           message: "Include Dockerfiles?",
-                          initialValue: true,
+                          initialValue: true
                       })
-                    : Promise.resolve(false),
+                    : Promise.resolve(false)
         },
         {
             onCancel: () => {
                 p.cancel("Operation cancelled");
                 process.exit(0);
-            },
+            }
         }
     );
 
@@ -265,16 +264,16 @@ async function generateConfigs(projectPath: string, config: ProjectConfig) {
                   dev: "turbo run dev --parallel",
                   build: "turbo run build",
                   lint: "turbo run lint",
-                  test: "turbo run test",
+                  test: "turbo run test"
               }
             : {
                   dev: "next dev",
                   build: "next build",
                   start: "next start",
-                  lint: "next lint",
+                  lint: "next lint"
               },
         dependencies: {} as Record<string, string>,
-        devDependencies: {} as Record<string, string>,
+        devDependencies: {} as Record<string, string>
     };
 
     if (config.monorepo) {
@@ -315,7 +314,7 @@ async function installDependencies(projectPath: string, config: ProjectConfig) {
     const cmd = config.packageManager === "bun" ? "bun" : config.packageManager;
     await execa(cmd, ["install"], {
         cwd: projectPath,
-        stdio: "ignore",
+        stdio: "ignore"
     });
 }
 

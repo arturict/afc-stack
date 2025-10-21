@@ -1,8 +1,4 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./apps/web" },
-    { "path": "./apps/ws" },
-    { "path": "./packages/db" }
-  ]
+    "files": [],
+    "references": [{ "path": "./apps/web" }, { "path": "./apps/ws" }, { "path": "./packages/db" }]
 }

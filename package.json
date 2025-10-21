@@ -2,7 +2,10 @@
     "name": "afc-stack",
     "version": "0.1.0",
     "private": true,
-    "workspaces": ["apps/*", "packages/*"],
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
     "scripts": {
         "dev": "turbo run dev --parallel",
         "build": "turbo run build",
@@ -54,5 +57,13 @@
     "engines": {
         "node": ">=20.0.0",
         "bun": ">=1.1.0"
+    },
+    "dependencies": {
+        "@auth/core": "^0.41.0",
+        "@fastify/websocket": "^11.2.0",
+        "@types/react": "^19.2.2",
+        "drizzle-kit": "^0.31.5",
+        "pino": "^10.1.0",
+        "vitest": "^3.2.4"
     }
 }

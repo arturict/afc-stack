@@ -7,70 +7,83 @@ Interactive CLI tool to create custom full-stack projects with your preferred te
 Choose from multiple options for each layer:
 
 ### Language
+
 - TypeScript (recommended)
 - JavaScript
 
 ### Package Manager
+
 - Bun (recommended)
 - pnpm
 - npm
 
 ### Project Structure
+
 - Monorepo (Turborepo)
 - Single app
 
 ### Database
+
 - PostgreSQL (recommended)
 - MySQL
 - SQLite
 - None
 
 ### ORM/Query Builder
+
 - Drizzle (recommended)
 - Prisma
 - None
 
 ### Authentication
+
 - NextAuth v5 (recommended)
 - Lucia
 - Clerk
 - None
 
 ### UI/Styling
+
 - Tailwind CSS (recommended)
 - shadcn/ui
 - None
 
 ### Realtime
+
 - WebSocket (Fastify)
 - Server-Sent Events
 - None
 
 ### File Storage
+
 - MinIO (dev) + S3 (prod)
 - UploadThing
 - AWS S3
 - None
 
 ### Analytics
+
 - PostHog (recommended)
 - Plausible
 - Umami
 - None
 
 ### Rate Limiting
+
 - Arcjet (recommended)
 - Upstash
 - Unkey
 - None
 
 ### Deployment
+
 - Coolify (recommended)
 - Vercel
 - Railway
 - None
 
 ### Additional
+
 - CI/CD (GitHub Actions)
 - Docker support
 - Development environment (docker-compose)
@@ -100,6 +113,7 @@ The CLI will guide you through selecting your preferences:
 15. **Docker**: Generate Dockerfiles
 
 After answering all questions, the tool will:
+
 - Show a configuration summary
 - Ask for confirmation
 - Generate the complete project structure

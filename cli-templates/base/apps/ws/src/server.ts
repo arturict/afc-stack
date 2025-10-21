@@ -15,7 +15,7 @@ app.get("/ws", { websocket: true }, (conn) => {
 
 app.post("/events/todo-created", async (req, reply) => {
     try {
-        const data = await req.body as any;
+        const data = (await req.body) as any;
         for (const c of clients) {
             c.send(JSON.stringify({ type: "todo:created", payload: data }));
         }

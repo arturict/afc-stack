@@ -7,25 +7,29 @@ This document defines code quality standards and tools for the AFC Stack.
 ## Tools & Configuration
 
 ### ESLint
+
 - ✅ **Configured**: Next.js Core Web Vitals
 - ✅ **Auto-fix on save**: Via VSCode settings
 - ✅ **Pre-commit**: Via lint-staged
 
 ### Prettier
+
 - ✅ **Configured**: Consistent formatting
 - ✅ **Settings**:
-  - Semi: true
-  - Single Quote: false
-  - Tab Width: 4
-  - Print Width: 120
-  - Trailing Comma: none
+    - Semi: true
+    - Single Quote: false
+    - Tab Width: 4
+    - Print Width: 120
+    - Trailing Comma: none
 
 ### TypeScript
+
 - ✅ **Strict Mode**: Enabled
 - ✅ **Project References**: Monorepo setup
 - ✅ **Type Checking**: `bun run typecheck`
 
 ### Commitlint
+
 - ✅ **Conventional Commits**: Enforced
 - ✅ **Pre-commit hook**: Validates format
 
@@ -34,21 +38,25 @@ This document defines code quality standards and tools for the AFC Stack.
 ### Current Status
 
 #### Build ✅
+
 ```bash
 bun run build  # All packages build successfully
 ```
 
 #### Type Safety ✅
+
 ```bash
 bun run typecheck  # Zero TypeScript errors (after fixes)
 ```
 
 #### Linting ✅
+
 ```bash
 bun run lint  # Zero ESLint warnings/errors
 ```
 
 #### Formatting ✅
+
 ```bash
 bun run format:check  # All files formatted
 ```
@@ -58,6 +66,7 @@ bun run format:check  # All files formatted
 ### TypeScript
 
 #### Type Safety
+
 ```typescript
 // ✅ Good - Explicit types
 function createUser(name: string, age: number): User {
@@ -71,6 +80,7 @@ function createUser(name, age) {
 ```
 
 #### Null Safety
+
 ```typescript
 // ✅ Good - Handle null/undefined
 const user = getUser();
@@ -84,21 +94,23 @@ console.log(user.name); // Could crash
 ```
 
 #### Return Types
+
 ```typescript
 // ✅ Good - Explicit return type
 async function fetchData(): Promise<Data[]> {
-    return await fetch('/api/data');
+    return await fetch("/api/data");
 }
 
 // ❌ Bad - Inferred return type (for public APIs)
 async function fetchData() {
-    return await fetch('/api/data');
+    return await fetch("/api/data");
 }
 ```
 
 ### React/Next.js
 
 #### Server Components (Default)
+
 ```tsx
 // ✅ Good - Server Component
 export default async function Page() {
@@ -107,13 +119,14 @@ export default async function Page() {
 }
 
 // ❌ Bad - Unnecessary client component
-"use client";
+("use client");
 export default function Page({ data }) {
     return <div>{data.title}</div>;
 }
 ```
 
 #### Client Components (When Needed)
+
 ```tsx
 // ✅ Good - Use client only for interactivity
 "use client";
@@ -121,11 +134,12 @@ import { useState } from "react";
 
 export default function Counter() {
     const [count, setCount] = useState(0);
-    return <button onClick={() => setCount(c => c + 1)}>{count}</button>;
+    return <button onClick={() => setCount((c) => c + 1)}>{count}</button>;
 }
 ```
 
 #### Error Handling
+
 ```tsx
 // ✅ Good - Error boundaries
 export default function Page() {
@@ -140,6 +154,7 @@ export default function Page() {
 ### API Routes
 
 #### Input Validation
+
 ```typescript
 // ✅ Good - Zod validation
 const schema = z.object({
@@ -158,18 +173,17 @@ export async function POST(req: Request) {
 ```
 
 #### Error Responses
+
 ```typescript
 // ✅ Good - Consistent error format
-return NextResponse.json(
-    { error: "not_found", message: "User not found" },
-    { status: 404 }
-);
+return NextResponse.json({ error: "not_found", message: "User not found" }, { status: 404 });
 
 // ❌ Bad - Inconsistent errors
 return new Response("Error!", { status: 500 });
 ```
 
 #### Rate Limiting
+
 ```typescript
 // ✅ Good - Always rate limit public endpoints
 const aj = arcjet({
@@ -189,6 +203,7 @@ export async function POST(req: Request) {
 ### Database (Drizzle)
 
 #### Schema Definition
+
 ```typescript
 // ✅ Good - Explicit constraints
 export const users = pgTable("users", {
@@ -200,19 +215,17 @@ export const users = pgTable("users", {
 ```
 
 #### Queries
+
 ```typescript
 // ✅ Good - Explicit selection
-const users = await db
-    .select({ id: users.id, name: users.name })
-    .from(users)
-    .where(eq(users.active, true))
-    .limit(10);
+const users = await db.select({ id: users.id, name: users.name }).from(users).where(eq(users.active, true)).limit(10);
 
 // ❌ Bad - SELECT *
 const users = await db.select().from(users);
 ```
 
 #### Transactions
+
 ```typescript
 // ✅ Good - Use transactions for multi-step operations
 await db.transaction(async (tx) => {
@@ -224,16 +237,19 @@ await db.transaction(async (tx) => {
 ## Testing Standards (Future)
 
 ### Unit Tests
+
 - Coverage target: 80%
 - Test utilities and helpers
 - Mock external dependencies
 
 ### Integration Tests
+
 - Test API routes end-to-end
 - Use test database
 - Clean up after tests
 
 ### E2E Tests
+
 - Test critical user flows
 - Use Playwright
 - Run in CI/CD
@@ -241,17 +257,20 @@ await db.transaction(async (tx) => {
 ## Performance Standards
 
 ### Bundle Size
+
 - Monitor with `@next/bundle-analyzer`
 - Lazy load large dependencies
 - Code split routes
 
 ### Lighthouse Scores
+
 - Performance: > 90
 - Accessibility: > 90
 - Best Practices: > 90
 - SEO: > 90
 
 ### Database
+
 - Index frequently queried columns
 - Use connection pooling (max 5)
 - Monitor slow queries
@@ -259,21 +278,25 @@ await db.transaction(async (tx) => {
 ## Security Standards
 
 ### Input Validation
+
 - ✅ Always validate with Zod
 - ✅ Sanitize user input
 - ✅ Use parameterized queries (Drizzle does this)
 
 ### Authentication
+
 - ✅ Use NextAuth v5
 - ✅ HTTPS only in production
 - ✅ Secure session cookies
 
 ### Rate Limiting
+
 - ✅ All public endpoints
 - ✅ Appropriate limits per endpoint
 - ✅ Monitor with Arcjet dashboard
 
 ### Environment Variables
+
 - ✅ Never commit secrets
 - ✅ Validate with Zod
 - ✅ Use typed access
@@ -281,6 +304,7 @@ await db.transaction(async (tx) => {
 ## Documentation Standards
 
 ### Code Comments
+
 ```typescript
 // ✅ Good - Explain WHY, not WHAT
 // Use exponential backoff to handle rate limits gracefully
@@ -292,6 +316,7 @@ await fetchData();
 ```
 
 ### JSDoc (Public APIs)
+
 ```typescript
 /**
  * Uploads a file to S3-compatible storage
@@ -305,6 +330,7 @@ export async function uploadFile(file: File): Promise<UploadResult> {
 ```
 
 ### README Updates
+
 - Update when adding features
 - Keep examples up-to-date
 - Document breaking changes
@@ -312,16 +338,19 @@ export async function uploadFile(file: File): Promise<UploadResult> {
 ## Automated Checks
 
 ### Pre-commit (via Husky)
+
 1. ✅ Format code (Prettier)
 2. ✅ Lint code (ESLint)
 3. ✅ Type check (TypeScript)
 
 ### Pre-push (Future)
+
 1. Run tests
 2. Check bundle size
 3. Verify build
 
 ### CI/CD
+
 1. ✅ Lint
 2. ✅ Type check
 3. ✅ Build
@@ -331,6 +360,7 @@ export async function uploadFile(file: File): Promise<UploadResult> {
 ## Code Review Checklist
 
 ### For Authors
+
 - [ ] Self-review code
 - [ ] Add/update tests
 - [ ] Update documentation
@@ -340,6 +370,7 @@ export async function uploadFile(file: File): Promise<UploadResult> {
 - [ ] Add changeset if needed
 
 ### For Reviewers
+
 - [ ] Code follows style guide
 - [ ] Types are correct
 - [ ] Error handling is proper
@@ -351,16 +382,19 @@ export async function uploadFile(file: File): Promise<UploadResult> {
 ## Tools to Add (Future)
 
 ### Static Analysis
+
 - [ ] **SonarQube** - Code quality and security
 - [ ] **CodeClimate** - Maintainability scoring
 - [ ] **Snyk** - Dependency vulnerability scanning
 
 ### Runtime Monitoring
+
 - [ ] **Sentry** - Error tracking
 - [ ] **LogRocket** - Session replay
 - [ ] **Datadog** - APM and logging
 
 ### Performance
+
 - [ ] **Lighthouse CI** - Performance budgets
 - [ ] **Bundle Analyzer** - Bundle size tracking
 - [ ] **Web Vitals** - Core metrics

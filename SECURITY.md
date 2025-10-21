@@ -13,10 +13,10 @@ If you discover a security vulnerability, please:
 1. **DO NOT** open a public issue
 2. Email security concerns to: your-email@example.com
 3. Include:
-   - Description of the vulnerability
-   - Steps to reproduce
-   - Potential impact
-   - Suggested fix (if any)
+    - Description of the vulnerability
+    - Steps to reproduce
+    - Potential impact
+    - Suggested fix (if any)
 
 We will respond within 48 hours and work with you to address the issue.
 
@@ -38,6 +38,7 @@ When using this template:
 ## Dependency Security
 
 This template uses:
+
 - Automated dependency updates (Dependabot recommended)
 - Known vulnerability scanning
 - Minimal dependency footprint

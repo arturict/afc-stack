@@ -15,8 +15,10 @@ export default function UploadPage() {
 
     return (
         <main className="p-6 space-y-4">
-            <input type="file" onChange={e => setFile(e.target.files?.[0] ?? null)} />
-            <button className="bg-black text-white px-4 py-2 rounded" onClick={doUpload}>Upload</button>
+            <input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+            <button className="bg-black text-white px-4 py-2 rounded" onClick={doUpload}>
+                Upload
+            </button>
             <div>{status}</div>
         </main>
     );

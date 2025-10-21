@@ -22,11 +22,13 @@ export async function uploadFile(file: File): Promise<UploadResult> {
         },
         forcePathStyle: true
     });
-    await s3.send(new PutObjectCommand({
-        Bucket: env.S3_BUCKET!,
-        Key: key,
-        Body: Buffer.from(arrayBuffer),
-        ContentType: file.type
-    }));
+    await s3.send(
+        new PutObjectCommand({
+            Bucket: env.S3_BUCKET!,
+            Key: key,
+            Body: Buffer.from(arrayBuffer),
+            ContentType: file.type
+        })
+    );
     return { key };
 }

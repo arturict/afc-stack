@@ -1,33 +1,33 @@
 name: CI
 on:
-  pull_request:
-  push:
-    branches: [ "**" ]
+    pull_request:
+    push:
+        branches: ["**"]
 
 jobs:
-  checks:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: 1.1.31
-      - name: Install
-        run: bun install
-      - name: Lint
-        run: bun run lint
-      - name: Typecheck
-        run: npx tsc -b
-      - name: Unit tests
-        run: bun run test
-      - name: Build web
-        working-directory: apps/web
-        run: bun run build
-      - name: Build ws
-        working-directory: apps/ws
-        run: bun run build || echo "ws has no build step"
-      - name: E2E (Playwright) – optional
-        if: ${{ false }} # set to true when you add Playwright
-        run: echo "skipped"
+    checks:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+        steps:
+            - uses: actions/checkout@v4
+            - uses: oven-sh/setup-bun@v1
+              with:
+                  bun-version: 1.1.31
+            - name: Install
+              run: bun install
+            - name: Lint
+              run: bun run lint
+            - name: Typecheck
+              run: npx tsc -b
+            - name: Unit tests
+              run: bun run test
+            - name: Build web
+              working-directory: apps/web
+              run: bun run build
+            - name: Build ws
+              working-directory: apps/ws
+              run: bun run build || echo "ws has no build step"
+            - name: E2E (Playwright) – optional
+              if: ${{ false }} # set to true when you add Playwright
+              run: echo "skipped"

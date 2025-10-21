@@ -1,18 +1,18 @@
 {
-  "name": "AFC Stack",
-  "description": "Production-ready full-stack monorepo with interactive CLI for custom stack generation",
-  "homepageUrl": "https://github.com/arturict/afc-stack",
-  "tags": [
-    "nextjs",
-    "typescript",
-    "monorepo",
-    "turborepo",
-    "drizzle",
-    "postgresql",
-    "nextauth",
-    "tailwind",
-    "websocket",
-    "template",
-    "starter"
-  ]
+    "name": "AFC Stack",
+    "description": "Production-ready full-stack monorepo with interactive CLI for custom stack generation",
+    "homepageUrl": "https://github.com/arturict/afc-stack",
+    "tags": [
+        "nextjs",
+        "typescript",
+        "monorepo",
+        "turborepo",
+        "drizzle",
+        "postgresql",
+        "nextauth",
+        "tailwind",
+        "websocket",
+        "template",
+        "starter"
+    ]
 }

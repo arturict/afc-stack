@@ -3,27 +3,30 @@
 ## Development Workflow
 
 1. **Create a branch** for your feature/fix:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
+
+    ```bash
+    git checkout -b feature/your-feature-name
+    ```
 
 2. **Make your changes** following the code style
 3. **Test locally**:
-   ```bash
-   bun run lint
-   bun run test
-   bun run build
-   ```
+
+    ```bash
+    bun run lint
+    bun run test
+    bun run build
+    ```
 
 4. **Commit** with descriptive messages:
-   ```bash
-   git commit -m "feat: add new feature"
-   ```
+
+    ```bash
+    git commit -m "feat: add new feature"
+    ```
 
 5. **Push** and create a pull request:
-   ```bash
-   git push origin feature/your-feature-name
-   ```
+    ```bash
+    git push origin feature/your-feature-name
+    ```
 
 ## Commit Convention
 
@@ -74,17 +77,19 @@ bun init -y
 ```
 
 Update `tsconfig.base.json`:
+
 ```json
 {
-  "paths": {
-    "@ac/new-package": ["packages/new-package/src"]
-  }
+    "paths": {
+        "@ac/new-package": ["packages/new-package/src"]
+    }
 }
 ```
 
 ### Adding API Routes
 
 Create in `apps/web/src/app/api/your-route/route.ts`:
+
 ```ts
 import { NextResponse } from "next/server";
 import arcjet from "@arcjet/next";

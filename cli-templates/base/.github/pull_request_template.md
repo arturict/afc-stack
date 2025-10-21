@@ -1,11 +1,14 @@
 ## Summary
+
 Kurzbeschreibung der Änderungen
 
 ## Changes
+
 - [ ] Feature/Fix 1
 - [ ] Feature/Fix 2
 
 ## Checks
+
 - [ ] Lint ok
 - [ ] Typecheck ok
 - [ ] Unit-Tests ok
