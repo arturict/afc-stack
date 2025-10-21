@@ -25,7 +25,7 @@ The modern CLI lets you choose exactly what you need:
 - **ORM**: Drizzle (recommended), Prisma, or none
 - **Auth**: NextAuth v5 (recommended), Lucia, Clerk, or none
 - **Styling**: Tailwind CSS, shadcn/ui, or none
-- **Realtime**: WebSocket (Fastify), SSE, or none
+- **Realtime**: WebSocket (optional, can add later), SSE, or none
 - **Storage**: MinIO/S3, UploadThing, or none
 - **Analytics**: PostHog, Plausible, Umami, or none
 - **Rate Limiting**: Arcjet, Upstash, Unkey, or none
@@ -39,7 +39,7 @@ The modern CLI lets you choose exactly what you need:
 
 - **Frontend**: Next.js 15 (App Router), Tailwind CSS, NextAuth v5
 - **Database**: Drizzle ORM + PostgreSQL
-- **Realtime**: Fastify WebSocket service
+- **Realtime**: Optional WebSocket service (Fastify)
 - **Storage**: MinIO (dev) / UploadThing (prod)
 - **Analytics**: PostHog Cloud
 - **Security**: Arcjet rate limiting
@@ -50,19 +50,21 @@ The modern CLI lets you choose exactly what you need:
 ```
 afc-stack/
 ├─ apps/
-│  ├─ web/          # Next.js frontend
-│  └─ ws/           # Fastify WebSocket service
+│  ├─ web/          # Next.js frontend + API routes
+│  └─ ws/           # WebSocket service (optional)
 ├─ packages/
 │  └─ db/           # Drizzle schema + client
 ├─ drizzle/         # SQL migrations
 └─ .github/         # CI/CD workflows
 ```
 
+**Note**: WebSocket service is optional. You can start without it and add it later when needed.
+
 ## Development
 
 ### Prerequisites
 
-- [Bun](https://bun.sh) 1.1.31+
+- [Bun](https://bun.sh) 1.3.0+
 - Docker & Docker Compose
 
 ### Setup
@@ -103,8 +105,24 @@ afc-stack/
 
     This starts:
     - Web: http://localhost:3000
-    - WebSocket: ws://localhost:4001
+    - WebSocket: ws://localhost:4001 (if enabled)
     - MinIO Console: http://localhost:9001
+
+## Adding WebSocket Later
+
+If you didn't select WebSocket during setup but need it now:
+
+```bash
+bun run add:websocket
+```
+
+This will:
+- Add the WebSocket service to `apps/ws`
+- Update your frontend with realtime functionality
+- Configure environment variables
+- Update API routes to broadcast events
+
+See `cli-templates/extras/websocket/README.md` for detailed documentation.
 
 ### Create MinIO Bucket
 
@@ -116,15 +134,18 @@ afc-stack/
 
 ### Coolify Setup
 
+**Deployment URL**: [cloud.artur.engineer](https://cloud.artur.engineer)
+
 1. **Database**: Create PostgreSQL instance
 2. **Web App**:
     - Dockerfile: `apps/web/Dockerfile`
     - Port: 3000
     - Add environment variables from `.env.example`
-3. **WebSocket Service**:
+3. **WebSocket Service** (optional):
     - Dockerfile: `apps/ws/Dockerfile`
     - Port: 4001
     - Enable WebSocket proxy
+    - Only needed if using realtime features
 
 ### GitHub Secrets
 
@@ -142,7 +163,8 @@ Push to `main` branch → GitHub Actions builds Docker images → pushes to GHCR
 - `bun run dev` - Start all services in dev mode
 - `bun run build` - Build all apps
 - `bun run lint` - Lint all code
-- `bun run test` - Run all tests
+- `bun test` - Run all tests with Bun's native test runner
+- `bun test --watch` - Run tests in watch mode
 
 ## Database Migrations
 

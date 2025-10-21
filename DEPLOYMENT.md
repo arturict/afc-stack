@@ -2,6 +2,8 @@
 
 ## Coolify Setup
 
+**Deployment URL**: [cloud.artur.engineer](https://cloud.artur.engineer)
+
 ### 1. Database
 
 1. Create a new PostgreSQL database in Coolify

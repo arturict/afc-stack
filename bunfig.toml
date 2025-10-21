@@ -1,0 +1,35 @@
+# Bun Configuration File
+# https://bun.sh/docs/runtime/bunfig
+
+[install]
+# Lockfile format
+frozenLockfile = false
+
+# Package manager behavior
+exact = false
+
+# Cache directory (optional, defaults to ~/.bun/install/cache)
+# cache = ".bun-cache"
+
+# Auto-install peer dependencies
+auto = true
+
+# Registry configuration
+# [install.scopes]
+# "@myorg" = { "url" = "https://registry.myorg.com", "token" = "..." }
+
+[test]
+# Test configuration
+# preload = ["./setup.ts"]
+coverage = false
+
+# Timeout for tests (milliseconds)
+# timeout = 5000
+
+[run]
+# Behavior for `bun run`
+# shell = "/bin/bash"
+
+[define]
+# Global defines for bundling
+# "process.env.NODE_ENV" = "\"production\""

@@ -28,5 +28,16 @@ export async function POST(req: Request) {
 
     const [inserted] = await db.insert(todos).values({ title: parsed.data.title }).returning();
 
+    // Realtime broadcast to WebSocket service
+    if (process.env.WS_INTERNAL_URL) {
+        await fetch(process.env.WS_INTERNAL_URL + "/events/todo-created", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(inserted)
+        }).catch(() => {
+            // Silent fail if WS service is not available
+        });
+    }
+
     return NextResponse.json(inserted, { status: 201 });
 }

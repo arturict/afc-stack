@@ -112,13 +112,13 @@ async function main() {
                 }),
             realtime: () =>
                 p.select({
-                    message: "Realtime",
+                    message: "Realtime updates",
                     options: [
-                        { value: "websocket", label: "WebSocket (Fastify)", hint: "recommended" },
-                        { value: "sse", label: "Server-Sent Events" },
-                        { value: "none", label: "None" }
+                        { value: "none", label: "None (can add later)", hint: "recommended" },
+                        { value: "websocket", label: "WebSocket (Fastify service)" },
+                        { value: "sse", label: "Server-Sent Events (future)" }
                     ],
-                    initialValue: "websocket" as const
+                    initialValue: "none" as const
                 }),
             storage: () =>
                 p.select({
@@ -246,6 +246,23 @@ async function copyTemplate(projectPath: string, config: ProjectConfig) {
     // Copy base structure based on monorepo choice
     if (config.monorepo) {
         await fs.copy(templateBase, projectPath);
+        
+        // Add WebSocket service if selected
+        if (config.realtime === "websocket") {
+            const wsSource = path.join(process.cwd(), "cli-templates", "extras", "websocket", "ws");
+            const wsTarget = path.join(projectPath, "apps", "ws");
+            await fs.copy(wsSource, wsTarget);
+            
+            // Replace page.tsx with WebSocket version
+            const wsPageSource = path.join(process.cwd(), "cli-templates", "extras", "websocket", "page.tsx");
+            const wsPageTarget = path.join(projectPath, "apps", "web", "src", "app", "page.tsx");
+            await fs.copy(wsPageSource, wsPageTarget);
+            
+            // Replace API route with WebSocket version
+            const wsRouteSource = path.join(process.cwd(), "cli-templates", "extras", "websocket", "route.ts");
+            const wsRouteTarget = path.join(projectPath, "apps", "web", "src", "app", "api", "todos", "route.ts");
+            await fs.copy(wsRouteSource, wsRouteTarget);
+        }
     } else {
         // Copy single app structure (to be implemented)
         await fs.copy(templateBase, projectPath);
@@ -305,6 +322,10 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 
     if (config.auth === "nextauth") {
         envExample += `\n# NextAuth\nNEXTAUTH_SECRET=change-me-32-chars\nNEXTAUTH_URL=http://localhost:3000\n`;
+    }
+
+    if (config.realtime === "websocket") {
+        envExample += `\n# WebSocket Realtime\nNEXT_PUBLIC_WS_URL=ws://localhost:4001\nWS_INTERNAL_URL=http://localhost:4001\n`;
     }
 
     await fs.writeFile(path.join(projectPath, ".env.example"), envExample.trim());

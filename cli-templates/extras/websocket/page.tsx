@@ -10,6 +10,16 @@ export default function Home() {
         fetch("/api/todos")
             .then((r) => r.json())
             .then(setTodos);
+        
+        // WebSocket for realtime updates
+        const socket = new WebSocket(process.env.NEXT_PUBLIC_WS_URL! + "/ws");
+        socket.onmessage = (ev) => {
+            try {
+                const msg = JSON.parse(ev.data);
+                if (msg.type === "todo:created") setTodos((prev) => [msg.payload, ...prev]);
+            } catch {}
+        };
+        return () => socket.close();
     }, []);
 
     const add = async () => {
@@ -19,13 +29,7 @@ export default function Home() {
             headers: { "content-type": "application/json" },
             body: JSON.stringify({ title })
         });
-        if (res.ok) {
-            setTitle("");
-            // Refresh list after adding
-            fetch("/api/todos")
-                .then((r) => r.json())
-                .then(setTodos);
-        }
+        if (res.ok) setTitle("");
     };
 
     return (

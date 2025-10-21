@@ -50,9 +50,11 @@ Choose from multiple options for each layer:
 
 ### Realtime
 
-- WebSocket (Fastify)
-- Server-Sent Events
-- None
+- None (recommended - add later if needed)
+- WebSocket (Fastify service)
+- Server-Sent Events (future)
+
+**Note**: It's recommended to start without realtime features and add them later using `bun run add:websocket` when you actually need them. This keeps your initial setup simpler.
 
 ### File Storage
 
@@ -87,6 +89,25 @@ Choose from multiple options for each layer:
 - CI/CD (GitHub Actions)
 - Docker support
 - Development environment (docker-compose)
+
+## Adding Features Later
+
+### WebSocket (Realtime)
+
+If you didn't enable WebSocket during project creation, you can add it later:
+
+```bash
+cd your-project
+bun run add:websocket
+```
+
+This will:
+- Copy the WebSocket service to `apps/ws`
+- Update frontend components with realtime functionality
+- Configure API routes to broadcast events
+- Add necessary environment variables
+
+For detailed documentation, see `cli-templates/extras/websocket/README.md`.
 
 ## Usage
 
@@ -229,7 +250,7 @@ For a production-ready SaaS/dashboard:
 - **ORM**: Drizzle
 - **Auth**: NextAuth
 - **Styling**: Tailwind + shadcn/ui
-- **Realtime**: WebSocket
+- **Realtime**: None initially (add later with `bun run add:websocket`)
 - **Storage**: MinIO (dev) → S3/UploadThing (prod)
 - **Analytics**: PostHog
 - **Rate Limiting**: Arcjet
@@ -237,13 +258,15 @@ For a production-ready SaaS/dashboard:
 - **CI/CD**: Yes
 - **Docker**: Yes
 
-This combination provides the best developer experience and production performance.
+This combination provides the best developer experience and production performance. Start simple and add complexity (like WebSocket) only when needed.
 
 ## Requirements
 
-- Bun 1.1.31+ (or Node.js 20+ if using npm/pnpm)
+- Bun 1.3.0+
 - Git
 - Docker (optional, for database)
+
+**Note**: This stack is built for Bun. If you prefer npm/pnpm, Node.js 20+ is required.
 
 ## License
 
