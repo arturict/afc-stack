@@ -5,8 +5,9 @@ import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import Discord from "next-auth/providers/discord";
 import Email from "next-auth/providers/email";
+import type { Provider } from "next-auth/providers";
 
-const providers = [
+const providers: Provider[] = [
     Email({
         server: {
             host: "smtp.resend.com",
@@ -24,11 +25,13 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
     providers.push(Google({ clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: process.env.GOOGLE_CLIENT_SECRET }));
 }
 if (process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET) {
-    providers.push(Discord({ clientId: process.env.DISCORD_CLIENT_ID, clientSecret: process.env.DISCORD_CLIENT_SECRET }));
+    providers.push(
+        Discord({ clientId: process.env.DISCORD_CLIENT_ID, clientSecret: process.env.DISCORD_CLIENT_SECRET })
+    );
 }
 
 const auth = NextAuth({
-    adapter: DrizzleAdapter(db),
+    adapter: DrizzleAdapter(db) as any, // TODO: Fix type incompatibility with NextAuth v5 beta
     providers,
     session: { strategy: "jwt" }
 });

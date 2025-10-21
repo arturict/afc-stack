@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { db, todos } from "@ac/db";
 import { z } from "zod";
-import arcjet from "@arcjet/next";
+import arcjet, { fixedWindow } from "@arcjet/next";
+import { desc } from "drizzle-orm";
 
 const aj = arcjet({
     key: process.env.ARCJET_KEY!,
-    rules: [{ type: "fixed-window", window: "10s", limit: 10 }]
+    rules: [fixedWindow({ mode: "LIVE", window: "10s", max: 10 })]
 });
 
 const createTodoSchema = z.object({ title: z.string().min(1).max(200) });
@@ -14,7 +15,7 @@ export async function GET(req: Request) {
     const decision = await aj.protect(req);
     if (decision.isDenied()) return NextResponse.json({ error: "rate_limited" }, { status: 429 });
 
-    const data = await db.query.todos.findMany({ limit: 50, orderBy: (t, { desc }) => [desc(t.createdAt)] });
+    const data = await db.select().from(todos).orderBy(desc(todos.createdAt)).limit(50);
     return NextResponse.json(data);
 }
 

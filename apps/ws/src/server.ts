@@ -1,7 +1,6 @@
 import "dotenv/config";
 import Fastify from "fastify";
 import websocket from "@fastify/websocket";
-import { db } from "@ac/db";
 
 const app = Fastify({ logger: true });
 app.register(websocket);
@@ -15,9 +14,10 @@ app.get("/ws", { websocket: true }, (conn) => {
 
 app.post("/events/todo-created", async (req, reply) => {
     try {
-        const data = await req.body as any;
-        for (const c of clients) {
-            c.send(JSON.stringify({ type: "todo:created", payload: data }));
+        const data = (await req.body) as any;
+        const message = JSON.stringify({ type: "todo:created", payload: data });
+        for (const client of Array.from(clients)) {
+            client.send(message);
         }
         return reply.status(204).send();
     } catch {
@@ -29,6 +29,6 @@ app.get("/health", async () => ({ ok: true }));
 
 const port = Number(process.env.PORT ?? 4001);
 app.listen({ port, host: "0.0.0.0" }).catch((err) => {
-    app.log.error(err);
+    console.error(err);
     process.exit(1);
 });

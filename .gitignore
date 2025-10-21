@@ -45,3 +45,4 @@ _data/
 # CLI build
 dist/
 create-repo.old.ts
+*.tsbuildinfo

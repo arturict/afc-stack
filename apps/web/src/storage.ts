@@ -1,4 +1,4 @@
-import { env } from "@/env";
+import { env } from "../env";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
 
@@ -22,11 +22,13 @@ export async function uploadFile(file: File): Promise<UploadResult> {
         },
         forcePathStyle: true
     });
-    await s3.send(new PutObjectCommand({
-        Bucket: env.S3_BUCKET!,
-        Key: key,
-        Body: Buffer.from(arrayBuffer),
-        ContentType: file.type
-    }));
+    await s3.send(
+        new PutObjectCommand({
+            Bucket: env.S3_BUCKET!,
+            Key: key,
+            Body: Buffer.from(arrayBuffer),
+            ContentType: file.type
+        })
+    );
     return { key };
 }
