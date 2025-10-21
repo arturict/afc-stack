@@ -1,4 +1,4 @@
-# Your Stack
+# AFC Stack
 
 Modern full-stack monorepo template with Next.js, Drizzle, WebSockets, and more.
 
@@ -38,7 +38,7 @@ Or use this complete template directly:
 ## Project Structure
 
 ```
-your-stack/
+afc-stack/
 ├─ apps/
 │  ├─ web/          # Next.js frontend
 │  └─ ws/           # Fastify WebSocket service
@@ -60,7 +60,7 @@ your-stack/
 1. **Clone and install dependencies**
    ```bash
    git clone <your-repo>
-   cd your-stack
+   cd afc-stack
    bun install
    ```
 

@@ -1,5 +1,5 @@
 {
-    "name": "your-stack",
+    "name": "afc-stack",
     "private": true,
     "workspaces": ["apps/*", "packages/*"],
     "scripts": {

@@ -1,7 +1,7 @@
 {
-  "name": "Stack Template",
+  "name": "AFC Stack",
   "description": "Production-ready full-stack monorepo with interactive CLI for custom stack generation",
-  "homepageUrl": "https://github.com/YOUR-USERNAME/stack-template",
+  "homepageUrl": "https://github.com/arturict/afc-stack",
   "tags": [
     "nextjs",
     "typescript",
