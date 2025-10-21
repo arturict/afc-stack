@@ -5,7 +5,7 @@
     "main": "src/client.ts",
     "dependencies": {
         "drizzle-orm": "^0.36.0",
-        "drizzle-kit": "^0.24.0",
+        "drizzle-kit": "^0.31.5",
         "pg": "^8.12.0",
         "zod": "^3.23.8",
         "dotenv": "^16.4.5"
