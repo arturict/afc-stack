@@ -1,5 +1,11 @@
 # @ac/db
 
+## 0.2.1
+
+### Patch Changes
+
+- Dependency updates: drizzle-kit 0.31.5
+
 ## 0.2.0
 
 ### Minor Changes
