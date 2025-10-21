@@ -1,31 +1,40 @@
 # AFC Stack
 
-Modern full-stack monorepo template with Next.js, Drizzle, WebSockets, and more.
+**Production-ready full-stack monorepo template with interactive CLI**
 
-## 🚀 Quick Start with CLI
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
 
-Create a custom stack with your preferred technologies:
+Create your perfect full-stack application with an interactive CLI powered by Clack Prompts.
+
+## ⚡ Quick Start
 
 ```bash
-bun create-repo.ts
+git clone https://github.com/arturict/afc-stack.git
+cd afc-stack
+bun install
+bun run create
 ```
 
-The interactive CLI lets you choose:
-- Language (TypeScript/JavaScript)
-- Package manager (Bun/pnpm/npm)
-- Database (Postgres/MySQL/SQLite)
-- ORM (Drizzle/Prisma)
-- Auth (NextAuth/Lucia/Clerk)
-- Styling (Tailwind/shadcn)
-- And much more...
+The modern CLI lets you choose exactly what you need:
+- **Language**: TypeScript or JavaScript
+- **Package Manager**: Bun, pnpm, or npm
+- **Database**: PostgreSQL, MySQL, SQLite, or none
+- **ORM**: Drizzle (recommended), Prisma, or none
+- **Auth**: NextAuth v5 (recommended), Lucia, Clerk, or none
+- **Styling**: Tailwind CSS, shadcn/ui, or none
+- **Realtime**: WebSocket (Fastify), SSE, or none
+- **Storage**: MinIO/S3, UploadThing, or none
+- **Analytics**: PostHog, Plausible, Umami, or none
+- **Rate Limiting**: Arcjet, Upstash, Unkey, or none
+- **Deployment**: Coolify (recommended), Vercel, Railway
+- **CI/CD**: GitHub Actions workflows
+- **Docker**: Production-ready Dockerfiles
 
-See [CLI.md](./CLI.md) for detailed documentation.
+## 🎯 Features
 
-## 📦 Pre-configured Template
-
-Or use this complete template directly:
-
-## Stack
+### Pre-configured Stack
 
 - **Frontend**: Next.js 15 (App Router), Tailwind CSS, NextAuth v5
 - **Database**: Drizzle ORM + PostgreSQL

@@ -1,14 +1,31 @@
 {
     "name": "afc-stack",
+    "version": "0.1.0",
     "private": true,
     "workspaces": ["apps/*", "packages/*"],
     "scripts": {
         "dev": "turbo run dev --parallel",
         "build": "turbo run build",
         "lint": "turbo run lint",
-        "test": "turbo run test"
+        "test": "turbo run test",
+        "create": "bun run create-repo.ts",
+        "build:cli": "tsup",
+        "changeset": "changeset",
+        "version": "changeset version",
+        "release": "changeset publish"
     },
     "devDependencies": {
+        "@changesets/changelog-github": "^0.5.1",
+        "@changesets/cli": "^2.29.7",
+        "@clack/prompts": "^0.11.0",
+        "@types/fs-extra": "^11.0.4",
+        "chalk": "^5.6.2",
+        "execa": "^9.6.0",
+        "fs-extra": "^11.3.2",
+        "gradient-string": "^3.0.0",
+        "ora": "^9.0.0",
+        "picocolors": "^1.1.1",
+        "tsup": "^8.5.0",
         "turbo": "latest",
         "typescript": "^5.6.3"
     },
