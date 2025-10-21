@@ -19,7 +19,7 @@
         "next-auth": "5.0.0-beta.25",
         "posthog-js": "^1.173.1",
         "react": "^18.3.1",
-        "react-dom": "^18.3.1",
+        "react-dom": "^19.2.0",
         "zod": "^3.23.8"
     },
     "devDependencies": {
