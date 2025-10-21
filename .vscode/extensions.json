@@ -4,6 +4,15 @@
         "esbenp.prettier-vscode",
         "bradlc.vscode-tailwindcss",
         "oven.bun-vscode",
-        "ms-azuretools.vscode-docker"
+        "ms-azuretools.vscode-docker",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "unifiedjs.vscode-mdx",
+        "formulahendry.auto-rename-tag",
+        "usernamehw.errorlens",
+        "eamodio.gitlens",
+        "waderyan.gitblame",
+        "humao.rest-client",
+        "csstools.postcss"
     ]
 }

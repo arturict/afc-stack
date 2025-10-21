@@ -1,0 +1,2 @@
+# Run tests before pushing (uncomment when tests are ready)
+# bun run test

@@ -1,0 +1,44 @@
+name: 🔐 Security Vulnerability
+description: Report a security vulnerability (privately via Security tab preferred)
+labels: ["security", "high-priority"]
+body:
+    - type: markdown
+      attributes:
+          value: |
+              **⚠️ For security vulnerabilities, please report via the Security tab instead of creating a public issue.**
+
+              Go to: Repository → Security → Report a vulnerability
+
+              Only use this template for security-related features or discussions.
+
+    - type: textarea
+      id: description
+      attributes:
+          label: Description
+          description: Describe the security concern or feature request
+          placeholder: Tell us what you're thinking about
+      validations:
+          required: true
+
+    - type: textarea
+      id: impact
+      attributes:
+          label: Impact
+          description: What is the security impact?
+          placeholder: Describe potential risks
+
+    - type: textarea
+      id: solution
+      attributes:
+          label: Proposed Solution
+          description: How should this be addressed?
+
+    - type: checkboxes
+      id: checklist
+      attributes:
+          label: Checklist
+          options:
+              - label: I have checked existing issues
+                required: true
+              - label: This is not a vulnerability report (use Security tab for that)
+                required: true

@@ -1,0 +1,112 @@
+// Task definitions for common development tasks
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "dev: all",
+            "type": "shell",
+            "command": "bun run dev",
+            "problemMatcher": [],
+            "isBackground": true,
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "dev: web",
+            "type": "shell",
+            "command": "bun run dev",
+            "options": {
+                "cwd": "${workspaceFolder}/apps/web"
+            },
+            "problemMatcher": [],
+            "isBackground": true
+        },
+        {
+            "label": "dev: ws",
+            "type": "shell",
+            "command": "bun run dev",
+            "options": {
+                "cwd": "${workspaceFolder}/apps/ws"
+            },
+            "problemMatcher": [],
+            "isBackground": true
+        },
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "bun run build",
+            "problemMatcher": ["$tsc"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "lint",
+            "type": "shell",
+            "command": "bun run lint",
+            "problemMatcher": ["$eslint-stylish"]
+        },
+        {
+            "label": "typecheck",
+            "type": "shell",
+            "command": "npx tsc -b",
+            "problemMatcher": ["$tsc"]
+        },
+        {
+            "label": "test",
+            "type": "shell",
+            "command": "bun run test",
+            "problemMatcher": [],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "docker: up",
+            "type": "shell",
+            "command": "docker compose -f compose.dev.yml up -d",
+            "problemMatcher": []
+        },
+        {
+            "label": "docker: down",
+            "type": "shell",
+            "command": "docker compose -f compose.dev.yml down",
+            "problemMatcher": []
+        },
+        {
+            "label": "db: generate migration",
+            "type": "shell",
+            "command": "bunx drizzle-kit generate",
+            "problemMatcher": []
+        },
+        {
+            "label": "db: migrate",
+            "type": "shell",
+            "command": "bunx drizzle-kit migrate",
+            "problemMatcher": []
+        },
+        {
+            "label": "db: studio",
+            "type": "shell",
+            "command": "bunx drizzle-kit studio",
+            "problemMatcher": [],
+            "isBackground": true
+        },
+        {
+            "label": "changeset: add",
+            "type": "shell",
+            "command": "bunx changeset",
+            "problemMatcher": []
+        },
+        {
+            "label": "changeset: version",
+            "type": "shell",
+            "command": "bun run version",
+            "problemMatcher": []
+        }
+    ]
+}

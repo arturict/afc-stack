@@ -7,6 +7,7 @@ AFC Stack is a production-ready full-stack monorepo template with an interactive
 ## Core Architecture
 
 ### Monorepo Structure
+
 - **Root**: Turborepo workspace with shared configs
 - **apps/web**: Next.js 15 App Router frontend (TypeScript)
 - **apps/ws**: Fastify WebSocket service (Bun runtime)
@@ -14,6 +15,7 @@ AFC Stack is a production-ready full-stack monorepo template with an interactive
 - **cli-templates/**: Template files for project generation
 
 ### Technology Stack
+
 - **Frontend**: Next.js 15, React 18, Tailwind CSS
 - **Backend**: Next.js API Routes, Fastify WebSocket
 - **Database**: PostgreSQL with Drizzle ORM
@@ -27,6 +29,7 @@ AFC Stack is a production-ready full-stack monorepo template with an interactive
 ## Code Style & Conventions
 
 ### TypeScript
+
 - Use strict mode always
 - Prefer interfaces over types for objects
 - Use type inference when obvious
@@ -34,6 +37,7 @@ AFC Stack is a production-ready full-stack monorepo template with an interactive
 - Use `const` for all variables unless mutation needed
 
 ### React/Next.js
+
 - Server Components by default
 - Use `"use client"` only when necessary (hooks, events)
 - File-based routing in `app/` directory
@@ -41,6 +45,7 @@ AFC Stack is a production-ready full-stack monorepo template with an interactive
 - Colocation of related files encouraged
 
 ### Naming Conventions
+
 - **Files**: kebab-case for regular files, PascalCase for React components
 - **Components**: PascalCase (e.g., `UserProfile.tsx`)
 - **Utilities**: camelCase (e.g., `formatDate.ts`)
@@ -48,6 +53,7 @@ AFC Stack is a production-ready full-stack monorepo template with an interactive
 - **Database tables**: snake_case (e.g., `user_sessions`)
 
 ### Code Organization
+
 ```typescript
 // Order of imports:
 // 1. External dependencies
@@ -64,6 +70,7 @@ import type { User } from "@/types";
 ## Development Guidelines
 
 ### Database (Drizzle ORM)
+
 - Define schemas in `packages/db/src/schema.ts`
 - Use relations for foreign keys
 - Always create migrations with `drizzle-kit generate`
@@ -71,16 +78,18 @@ import type { User } from "@/types";
 - Use prepared statements for repeated queries
 
 Example:
+
 ```typescript
 // Good
 export const users = pgTable("users", {
     id: serial("id").primaryKey(),
     email: text("email").notNull().unique(),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
+    createdAt: timestamp("created_at").notNull().defaultNow()
 });
 ```
 
 ### API Routes
+
 - Use Zod for validation
 - Implement proper error handling
 - Apply rate limiting with Arcjet
@@ -88,30 +97,34 @@ export const users = pgTable("users", {
 - Return consistent error shapes
 
 Example:
+
 ```typescript
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import arcjet from "@arcjet/next";
 
-const schema = z.object({ /* ... */ });
+const schema = z.object({
+    /* ... */
+});
 
 export async function POST(req: Request) {
     const decision = await aj.protect(req);
     if (decision.isDenied()) {
         return NextResponse.json({ error: "rate_limited" }, { status: 429 });
     }
-    
+
     const body = await req.json();
     const parsed = schema.safeParse(body);
     if (!parsed.success) {
         return NextResponse.json({ error: "invalid_input" }, { status: 400 });
     }
-    
+
     // ... handle request
 }
 ```
 
 ### WebSocket Service
+
 - Keep logic in `apps/ws/src/server.ts`
 - Use Fastify plugins for modularity
 - Broadcast events to all connected clients
@@ -119,6 +132,7 @@ export async function POST(req: Request) {
 - Log errors with Fastify logger
 
 ### Environment Variables
+
 - Validate in `apps/web/src/env.ts` using Zod
 - Always provide `.env.example`
 - Never commit actual `.env` files
@@ -126,6 +140,7 @@ export async function POST(req: Request) {
 - Use typed env access: `env.DATABASE_URL`
 
 ### Error Handling
+
 - Use try-catch for async operations
 - Log errors with context
 - Return user-friendly messages
@@ -135,6 +150,7 @@ export async function POST(req: Request) {
 ## CLI Development
 
 ### Interactive Prompts
+
 - Use `@clack/prompts` for all user input
 - Provide sensible defaults (marked with "recommended")
 - Validate input immediately
@@ -142,6 +158,7 @@ export async function POST(req: Request) {
 - Handle cancellation gracefully
 
 ### Template System
+
 - Base templates in `cli-templates/base/`
 - Optional features in `cli-templates/extras/`
 - Use conditional copying based on user choices
@@ -149,6 +166,7 @@ export async function POST(req: Request) {
 - Preserve file permissions
 
 ### Build & Distribution
+
 - Build with tsup: `bun run build:cli`
 - Output to `dist/` (gitignored)
 - Bundle all dependencies
@@ -158,18 +176,21 @@ export async function POST(req: Request) {
 ## Testing Strategy
 
 ### Unit Tests
+
 - Test utilities and helpers
 - Mock external dependencies
 - Use descriptive test names
 - Aim for 80%+ coverage on critical paths
 
 ### Integration Tests
+
 - Test API routes end-to-end
 - Use test database
 - Clean up after tests
 - Test error scenarios
 
 ### E2E Tests (future)
+
 - Use Playwright for browser tests
 - Test critical user flows
 - Run in CI pipeline
@@ -177,6 +198,7 @@ export async function POST(req: Request) {
 ## Performance Optimization
 
 ### Frontend
+
 - Use React Server Components by default
 - Implement loading states
 - Optimize images with Next.js Image
@@ -184,6 +206,7 @@ export async function POST(req: Request) {
 - Use `suspense` for data fetching
 
 ### Backend
+
 - Use connection pooling (max 5 for Postgres)
 - Implement caching where appropriate
 - Optimize database queries
@@ -191,6 +214,7 @@ export async function POST(req: Request) {
 - Monitor with PostHog
 
 ### Build
+
 - Leverage Turborepo cache
 - Optimize bundle size
 - Use dynamic imports for large dependencies
@@ -199,6 +223,7 @@ export async function POST(req: Request) {
 ## Deployment
 
 ### Docker
+
 - Multi-stage builds for smaller images
 - Use Alpine base images
 - Run migrations before app start
@@ -206,6 +231,7 @@ export async function POST(req: Request) {
 - Set proper environment variables
 
 ### CI/CD
+
 - GitHub Actions for automation
 - Run lint, typecheck, and tests
 - Build Docker images on main branch
@@ -226,19 +252,19 @@ export async function POST(req: Request) {
 ## Common Patterns
 
 ### Server Action (Next.js 15)
+
 ```typescript
 "use server";
 import { db } from "@ac/db";
 
 export async function createTodo(title: string) {
-    const [todo] = await db.insert(todos)
-        .values({ title })
-        .returning();
+    const [todo] = await db.insert(todos).values({ title }).returning();
     return todo;
 }
 ```
 
 ### WebSocket Broadcast
+
 ```typescript
 // In apps/ws
 const clients = new Set<WebSocket>();
@@ -253,13 +279,16 @@ function broadcast(event: string, data: unknown) {
 ```
 
 ### Type-Safe Environment
+
 ```typescript
 import { z } from "zod";
 
-export const env = z.object({
-    DATABASE_URL: z.string().url(),
-    // ... other vars
-}).parse(process.env);
+export const env = z
+    .object({
+        DATABASE_URL: z.string().url()
+        // ... other vars
+    })
+    .parse(process.env);
 ```
 
 ## Troubleshooting
@@ -275,6 +304,7 @@ export const env = z.object({
 ## Version Management
 
 ### Changesets
+
 - Create changeset: `bunx changeset`
 - Version bump: `bun run version`
 - Choose semver level (major/minor/patch)
@@ -284,7 +314,7 @@ export const env = z.object({
 ## When Making Changes
 
 1. **Check existing patterns** - Follow established conventions
-2. **Write tests** - Especially for critical functionality  
+2. **Write tests** - Especially for critical functionality
 3. **Update docs** - Keep README and docs in sync
 4. **Run linters** - `bun run lint` before committing
 5. **Test locally** - Verify changes work end-to-end

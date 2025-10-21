@@ -1,0 +1,39 @@
+name: 💡 Question
+description: Ask a question about the project
+labels: ["question"]
+body:
+    - type: markdown
+      attributes:
+          value: |
+              **Before asking:**
+              - Check the [README](../README.md)
+              - Check [Documentation](../docs)
+              - Search existing issues and discussions
+
+    - type: textarea
+      id: question
+      attributes:
+          label: Your Question
+          description: What would you like to know?
+          placeholder: Ask your question here
+      validations:
+          required: true
+
+    - type: textarea
+      id: context
+      attributes:
+          label: Context
+          description: Provide any relevant context
+          placeholder: |
+              What are you trying to achieve?
+              What have you tried so far?
+
+    - type: textarea
+      id: environment
+      attributes:
+          label: Environment (if relevant)
+          description: Your setup details
+          placeholder: |
+              - OS: [e.g., Ubuntu 22.04]
+              - Node version: [e.g., 20.10.0]
+              - Bun version: [e.g., 1.1.31]

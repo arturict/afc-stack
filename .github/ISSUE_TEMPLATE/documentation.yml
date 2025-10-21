@@ -1,0 +1,61 @@
+name: 📚 Documentation
+description: Suggest improvements or report issues with documentation
+labels: ["documentation"]
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Thanks for helping improve our documentation!
+
+    - type: dropdown
+      id: doc-type
+      attributes:
+          label: Documentation Type
+          options:
+              - README
+              - API Documentation
+              - Setup/Installation Guide
+              - Deployment Guide
+              - CLI Documentation
+              - Code Comments
+              - Other
+      validations:
+          required: true
+
+    - type: textarea
+      id: issue
+      attributes:
+          label: Issue Description
+          description: What's wrong or missing in the documentation?
+          placeholder: Describe the documentation issue
+      validations:
+          required: true
+
+    - type: textarea
+      id: location
+      attributes:
+          label: Location
+          description: Where is this documentation located?
+          placeholder: |
+              File: README.md
+              Section: Installation
+              Line: 42
+      validations:
+          required: true
+
+    - type: textarea
+      id: suggestion
+      attributes:
+          label: Suggested Improvement
+          description: How should it be improved?
+          placeholder: Your suggestion for better documentation
+
+    - type: checkboxes
+      id: checklist
+      attributes:
+          label: Checklist
+          options:
+              - label: I have checked for similar documentation issues
+                required: true
+              - label: I can provide a PR to fix this
+                required: false
