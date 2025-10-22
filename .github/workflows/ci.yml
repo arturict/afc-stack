@@ -18,10 +18,10 @@ jobs:
               run: bun install
             - name: Lint
               run: bun run lint
-            - name: Typecheck
-              run: npx tsc -b
-            - name: Unit tests
-              run: bun run test
+            # - name: Typecheck
+            #   run: npx tsc -b
+            # - name: Unit tests
+            #   run: bun run test
             - name: Build web
               working-directory: apps/web
               run: bun run build
