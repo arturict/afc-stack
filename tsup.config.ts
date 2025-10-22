@@ -7,5 +7,9 @@ export default defineConfig({
     splitting: false,
     sourcemap: true,
     clean: true,
-    shims: true
+    shims: true,
+    noExternal: [/(.*)/],
+    banner: {
+        js: "import { createRequire } from 'module';const require = createRequire(import.meta.url);"
+    }
 });

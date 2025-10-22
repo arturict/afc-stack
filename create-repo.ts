@@ -16,12 +16,14 @@ interface ProjectConfig {
     analytics: "posthog" | "plausible" | "umami" | "none";
     ratelimit: "arcjet" | "upstash" | "unkey" | "none";
     styling: "tailwind" | "shadcn" | "none";
-    database: "postgres" | "mysql" | "sqlite" | "none";
+    database: "postgres" | "mysql" | "mariadb" | "mongodb" | "mssql" | "sqlite" | "none";
     deployment: "coolify" | "vercel" | "railway" | "none";
     packageManager: "bun" | "pnpm" | "npm";
     cicd: boolean;
     docker: boolean;
     monorepo: boolean;
+    hasHostedDb?: boolean;
+    databaseUrl?: string;
 }
 
 async function main() {
@@ -72,6 +74,9 @@ async function main() {
                     options: [
                         { value: "postgres", label: "PostgreSQL", hint: "recommended" },
                         { value: "mysql", label: "MySQL" },
+                        { value: "mariadb", label: "MariaDB" },
+                        { value: "mongodb", label: "MongoDB" },
+                        { value: "mssql", label: "Microsoft SQL Server" },
                         { value: "sqlite", label: "SQLite" },
                         { value: "none", label: "None" }
                     ],
@@ -89,6 +94,115 @@ async function main() {
                           initialValue: "drizzle" as const
                       })
                     : Promise.resolve("none" as const),
+            hasHostedDb: ({ results }) =>
+                results.database !== "none" && results.database !== "sqlite"
+                    ? p.confirm({
+                          message: `Do you have a hosted ${
+                              results.database === "postgres" ? "PostgreSQL" :
+                              results.database === "mysql" ? "MySQL" :
+                              results.database === "mariadb" ? "MariaDB" :
+                              results.database === "mongodb" ? "MongoDB" :
+                              results.database === "mssql" ? "SQL Server" : ""
+                          } instance?`,
+                          initialValue: false
+                      })
+                    : Promise.resolve(false),
+            databaseUrl: async ({ results }) => {
+                if (results.hasHostedDb && results.database !== "none" && results.database !== "sqlite") {
+                    const dbTypeMap = {
+                        postgres: "PostgreSQL",
+                        mysql: "MySQL",
+                        mariadb: "MariaDB",
+                        mongodb: "MongoDB",
+                        mssql: "SQL Server"
+                    };
+                    const dbType = dbTypeMap[results.database as keyof typeof dbTypeMap];
+                    
+                    // Show popular providers
+                    const providersByDb = {
+                        postgres: ["Supabase", "Neon", "Railway", "Render", "Vercel Postgres", "AWS RDS", "Other"],
+                        mysql: ["PlanetScale", "Railway", "Render", "AWS RDS", "Other"],
+                        mariadb: ["Railway", "Render", "AWS RDS", "DigitalOcean", "Other"],
+                        mongodb: ["MongoDB Atlas", "Railway", "Render", "DigitalOcean", "Other"],
+                        mssql: ["Azure SQL", "AWS RDS", "Railway", "Other"]
+                    };
+                    
+                    const providers = providersByDb[results.database as keyof typeof providersByDb];
+                    
+                    const providerChoice = await p.select({
+                        message: `Which ${dbType} provider are you using?`,
+                        options: providers.map(p => ({ value: p.toLowerCase().replace(/ /g, '-'), label: p }))
+                    });
+
+                    if (providerChoice === Symbol.for("clack:cancel")) {
+                        p.cancel("Operation cancelled");
+                        process.exit(0);
+                    }
+
+                    const examplesByDb: Record<string, Record<string, string>> = {
+                        postgres: {
+                            supabase: "postgres://postgres:[password]@db.[project-ref].supabase.co:5432/postgres",
+                            neon: "postgres://[user]:[password]@[endpoint].neon.tech/[dbname]",
+                            railway: "postgres://postgres:[password]@[region].railway.app:5432/railway",
+                            render: "postgres://[user]:[password]@[hostname].render.com/[dbname]",
+                            "vercel-postgres": "postgres://[user]:[password]@[endpoint].postgres.vercel-storage.com/[dbname]",
+                            "aws-rds": "postgres://[user]:[password]@[endpoint].rds.amazonaws.com:5432/[dbname]",
+                            other: "postgres://user:password@host:5432/dbname"
+                        },
+                        mysql: {
+                            planetscale: "mysql://[username]:[password]@[host].psdb.cloud/[database]?sslaccept=strict",
+                            railway: "mysql://mysql:[password]@[region].railway.app:3306/railway",
+                            render: "mysql://[user]:[password]@[hostname].render.com/[dbname]",
+                            "aws-rds": "mysql://[user]:[password]@[endpoint].rds.amazonaws.com:3306/[dbname]",
+                            other: "mysql://user:password@host:3306/dbname"
+                        },
+                        mariadb: {
+                            railway: "mysql://mysql:[password]@[region].railway.app:3306/railway",
+                            render: "mysql://[user]:[password]@[hostname].render.com/[dbname]",
+                            "aws-rds": "mysql://[user]:[password]@[endpoint].rds.amazonaws.com:3306/[dbname]",
+                            digitalocean: "mysql://[user]:[password]@[host].db.ondigitalocean.com:25060/[dbname]?ssl-mode=REQUIRED",
+                            other: "mysql://user:password@host:3306/dbname"
+                        },
+                        mongodb: {
+                            "mongodb-atlas": "mongodb+srv://[username]:[password]@[cluster].mongodb.net/[dbname]?retryWrites=true&w=majority",
+                            railway: "mongodb://mongo:[password]@[region].railway.app:27017",
+                            render: "mongodb://[user]:[password]@[hostname].render.com/[dbname]",
+                            digitalocean: "mongodb://[user]:[password]@[host].db.ondigitalocean.com:27017/[dbname]?tls=true",
+                            other: "mongodb://user:password@host:27017/dbname"
+                        },
+                        mssql: {
+                            "azure-sql": "Server=[server].database.windows.net,1433;Database=[dbname];User Id=[user];Password=[password];Encrypt=true",
+                            "aws-rds": "Server=[endpoint].rds.amazonaws.com,1433;Database=[dbname];User Id=[user];Password=[password]",
+                            railway: "Server=[region].railway.app,1433;Database=railway;User Id=sqlserver;Password=[password]",
+                            other: "Server=host,1433;Database=dbname;User Id=user;Password=password"
+                        }
+                    };
+
+                    const examples = examplesByDb[results.database as keyof typeof examplesByDb];
+                    const example = examples[providerChoice as string];
+
+                    const prefixMap = {
+                        postgres: "postgres",
+                        mysql: "mysql",
+                        mariadb: "mysql",
+                        mongodb: "mongodb",
+                        mssql: "Server="
+                    };
+
+                    return p.text({
+                        message: `Enter your ${dbType} connection string`,
+                        placeholder: example,
+                        validate: (value) => {
+                            if (!value) return "Connection string is required";
+                            const prefix = prefixMap[results.database as keyof typeof prefixMap];
+                            if (!value.startsWith(prefix)) {
+                                return `Connection string must start with ${prefix}`;
+                            }
+                        }
+                    });
+                }
+                return Promise.resolve(undefined);
+            },
             auth: () =>
                 p.select({
                     message: "Authentication",
@@ -225,9 +339,11 @@ async function main() {
             `${color.green("✓")} Project created at ${color.cyan(`./${config.name}`)}\n\n` +
                 `${color.bold("Next steps:")}\n` +
                 `  ${color.cyan("cd")} ${config.name}\n` +
-                (config.database !== "none" || config.storage !== "none"
-                    ? `  ${color.cyan(`${pm} run docker:up`)}  ${color.dim("# Start database & services")}\n`
-                    : "") +
+                (config.hasHostedDb
+                    ? `  ${color.cyan("cp .env.example .env")}  ${color.dim("# Database URL already configured")}\n`
+                    : (config.database !== "none" && config.database !== "sqlite") || config.storage !== "none"
+                      ? `  ${color.cyan(`${pm} run docker:up`)}  ${color.dim("# Start local database & services")}\n`
+                      : "") +
                 (config.database !== "none" && config.orm === "drizzle"
                     ? `  ${color.cyan(`${pmx} drizzle-kit generate && ${pmx} drizzle-kit migrate`)}  ${color.dim("# Setup database")}\n`
                     : config.database !== "none" && config.orm === "prisma"
@@ -280,6 +396,7 @@ async function generateConfigs(projectPath: string, config: ProjectConfig) {
         version: "0.1.0",
         private: true,
         type: "module" as const,
+        packageManager: `${config.packageManager}@latest`,
         scripts: config.monorepo
             ? {
                   dev: "turbo run dev --parallel",
@@ -299,8 +416,8 @@ async function generateConfigs(projectPath: string, config: ProjectConfig) {
         devDependencies: {} as Record<string, string>
     };
 
-    // Add docker scripts if database or storage is used
-    if (config.database !== "none" || config.storage !== "none") {
+    // Add docker scripts if database or storage is used AND database is not hosted
+    if (((config.database !== "none" && !config.hasHostedDb) || config.storage !== "none") && config.database !== "sqlite") {
         pkg.scripts["docker:up"] = "docker compose up -d";
         pkg.scripts["docker:down"] = "docker compose down";
         pkg.scripts["docker:logs"] = "docker compose logs -f";
@@ -330,7 +447,7 @@ async function generateConfigs(projectPath: string, config: ProjectConfig) {
     await generateDockerCompose(projectPath, config);
 
     // Generate .env.example
-    let envExample = `# Database\n${config.database !== "none" ? `DATABASE_URL=${getDefaultDatabaseUrl(config.database)}` : ""}
+    let envExample = `# Database\n${config.database !== "none" ? `DATABASE_URL=${config.databaseUrl || getDefaultDatabaseUrl(config.database, config.name)}` : ""}
 
 # App
 NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -364,12 +481,18 @@ async function installDependencies(projectPath: string, config: ProjectConfig) {
     });
 }
 
-function getDefaultDatabaseUrl(db: string): string {
+function getDefaultDatabaseUrl(db: string, projectName: string): string {
     switch (db) {
         case "postgres":
-            return "postgres://app:app@localhost:5432/app";
+            return `postgres://app:app@localhost:5432/${projectName}`;
         case "mysql":
-            return "mysql://app:app@localhost:3306/app";
+            return `mysql://app:app@localhost:3306/${projectName}`;
+        case "mariadb":
+            return `mysql://app:app@localhost:3306/${projectName}`;
+        case "mongodb":
+            return `mongodb://app:app@localhost:27017/${projectName}`;
+        case "mssql":
+            return `Server=localhost,1433;Database=${projectName};User Id=sa;Password=YourStrong@Passw0rd`;
         case "sqlite":
             return "file:./dev.db";
         default:
@@ -378,19 +501,19 @@ function getDefaultDatabaseUrl(db: string): string {
 }
 
 async function generateDockerCompose(projectPath: string, config: ProjectConfig) {
-    // Only generate if database or storage is needed
-    if (config.database === "none" && config.storage === "none") {
+    // Only generate if database or storage is needed AND database is not hosted
+    if ((config.database === "none" || config.hasHostedDb) && config.storage === "none") {
         return;
     }
 
     let compose = `services:\n`;
 
-    // Add database service
-    if (config.database === "postgres") {
+    // Add database service only if not hosted
+    if (config.database === "postgres" && !config.hasHostedDb) {
         compose += `  postgres:
     image: postgres:16
     environment:
-      POSTGRES_DB: app
+      POSTGRES_DB: ${config.name}
       POSTGRES_USER: app
       POSTGRES_PASSWORD: app
     ports:
@@ -404,11 +527,11 @@ async function generateDockerCompose(projectPath: string, config: ProjectConfig)
       retries: 5
 
 `;
-    } else if (config.database === "mysql") {
+    } else if (config.database === "mysql" && !config.hasHostedDb) {
         compose += `  mysql:
     image: mysql:8
     environment:
-      MYSQL_DATABASE: app
+      MYSQL_DATABASE: ${config.name}
       MYSQL_USER: app
       MYSQL_PASSWORD: app
       MYSQL_ROOT_PASSWORD: root
@@ -419,6 +542,61 @@ async function generateDockerCompose(projectPath: string, config: ProjectConfig)
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s
+      timeout: 5s
+      retries: 5
+
+`;
+    } else if (config.database === "mariadb" && !config.hasHostedDb) {
+        compose += `  mariadb:
+    image: mariadb:11
+    environment:
+      MARIADB_DATABASE: ${config.name}
+      MARIADB_USER: app
+      MARIADB_PASSWORD: app
+      MARIADB_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./_data/mariadb:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+`;
+    } else if (config.database === "mongodb" && !config.hasHostedDb) {
+        compose += `  mongodb:
+    image: mongo:7
+    environment:
+      MONGO_INITDB_DATABASE: ${config.name}
+      MONGO_INITDB_ROOT_USERNAME: app
+      MONGO_INITDB_ROOT_PASSWORD: app
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./_data/mongodb:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+`;
+    } else if (config.database === "mssql" && !config.hasHostedDb) {
+        compose += `  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "YourStrong@Passw0rd"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./_data/mssql:/var/opt/mssql
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "YourStrong@Passw0rd", "-Q", "SELECT 1"]
+      interval: 10s
       timeout: 5s
       retries: 5
 
@@ -447,7 +625,10 @@ async function generateDockerCompose(projectPath: string, config: ProjectConfig)
 `;
     }
 
-    await fs.writeFile(path.join(projectPath, "docker-compose.yml"), compose.trim() + "\n");
+    // Only write file if there's content (not just "services:\n")
+    if (compose.trim() !== "services:") {
+        await fs.writeFile(path.join(projectPath, "docker-compose.yml"), compose.trim() + "\n");
+    }
 }
 
 async function generateSetupInstructions(projectPath: string, config: ProjectConfig) {
@@ -466,11 +647,37 @@ ${pm} install
 
 `;
 
-    // Docker setup section
-    if (config.database !== "none" || config.storage !== "none") {
+    // Docker setup section or hosted DB section
+    let stepNumber = 2;
+    if (config.hasHostedDb && config.database !== "none") {
+        instructions += `### 2. Database Configuration (Hosted)
+
+You've configured a hosted ${config.database === "postgres" ? "PostgreSQL" : "MySQL"} database.
+
+Your \`.env.example\` already contains your database connection string.
+
+\`\`\`bash
+# Copy environment file
+cp .env.example .env
+\`\`\`
+
+**Important:** Your database credentials are in the \`.env\` file. Make sure this file is in \`.gitignore\` (it already is by default).
+
+`;
+        stepNumber = 3;
+    } else if ((config.database !== "none" && config.database !== "sqlite") || config.storage !== "none") {
+        const services = [];
+        if (config.database !== "none" && config.database !== "sqlite") {
+            services.push(config.database);
+        }
+        if (config.storage === "minio") {
+            services.push("MinIO");
+        }
+        const servicesText = services.join(" and ");
+
         instructions += `### 2. Start Docker Services
 
-Start the local development services (${config.database !== "none" ? config.database : ""}${config.database !== "none" && config.storage === "minio" ? " and " : ""}${config.storage === "minio" ? "MinIO" : ""}):
+Start the local development services (${servicesText}):
 
 \`\`\`bash
 # Start services in background
@@ -495,12 +702,12 @@ If you prefer not to use Docker Compose, you can run services individually:
 
 `;
 
-        if (config.database === "postgres") {
+        if (config.database === "postgres" && !config.hasHostedDb) {
             instructions += `**PostgreSQL:**
 \`\`\`bash
 docker run -d \\
   --name ${config.name}-postgres \\
-  -e POSTGRES_DB=app \\
+  -e POSTGRES_DB=${config.name} \\
   -e POSTGRES_USER=app \\
   -e POSTGRES_PASSWORD=app \\
   -p 5432:5432 \\
@@ -509,18 +716,61 @@ docker run -d \\
 \`\`\`
 
 `;
-        } else if (config.database === "mysql") {
+        } else if (config.database === "mysql" && !config.hasHostedDb) {
             instructions += `**MySQL:**
 \`\`\`bash
 docker run -d \\
   --name ${config.name}-mysql \\
-  -e MYSQL_DATABASE=app \\
+  -e MYSQL_DATABASE=${config.name} \\
   -e MYSQL_USER=app \\
   -e MYSQL_PASSWORD=app \\
   -e MYSQL_ROOT_PASSWORD=root \\
   -p 3306:3306 \\
   -v ${config.name}_mysql_data:/var/lib/mysql \\
   mysql:8
+\`\`\`
+
+`;
+        } else if (config.database === "mariadb" && !config.hasHostedDb) {
+            instructions += `**MariaDB:**
+\`\`\`bash
+docker run -d \\
+  --name ${config.name}-mariadb \\
+  -e MARIADB_DATABASE=${config.name} \\
+  -e MARIADB_USER=app \\
+  -e MARIADB_PASSWORD=app \\
+  -e MARIADB_ROOT_PASSWORD=root \\
+  -p 3306:3306 \\
+  -v ${config.name}_mariadb_data:/var/lib/mysql \\
+  mariadb:11
+\`\`\`
+
+`;
+        } else if (config.database === "mongodb" && !config.hasHostedDb) {
+            instructions += `**MongoDB:**
+\`\`\`bash
+docker run -d \\
+  --name ${config.name}-mongodb \\
+  -e MONGO_INITDB_DATABASE=${config.name} \\
+  -e MONGO_INITDB_ROOT_USERNAME=app \\
+  -e MONGO_INITDB_ROOT_PASSWORD=app \\
+  -p 27017:27017 \\
+  -v ${config.name}_mongodb_data:/data/db \\
+  mongo:7
+\`\`\`
+
+`;
+        } else if (config.database === "mssql" && !config.hasHostedDb) {
+            instructions += `**Microsoft SQL Server:**
+\`\`\`bash
+docker run -d \\
+  --name ${config.name}-mssql \\
+  -e ACCEPT_EULA=Y \\
+  -e MSSQL_SA_PASSWORD=YourStrong@Passw0rd \\
+  -e MSSQL_PID=Developer \\
+  -p 1433:1433 \\
+  -v ${config.name}_mssql_data:/var/opt/mssql \\
+  mcr.microsoft.com/mssql/server:2022-latest
 \`\`\`
 
 `;
@@ -544,22 +794,25 @@ Access MinIO Console at: http://localhost:9001 (login: minio / minio12345)
 
 `;
         }
+        stepNumber = 3;
     }
 
     // Database migration section
     if (config.database !== "none" && config.orm !== "none") {
-        const stepNum = config.database !== "none" || config.storage !== "none" ? "3" : "2";
-        instructions += `### ${stepNum}. Setup Database
+        instructions += `### ${stepNumber}. Setup Database
 
 `;
 
         if (config.orm === "drizzle") {
-            instructions += `Copy environment file and update if needed:
+            if (!config.hasHostedDb) {
+                instructions += `Copy environment file and update if needed:
 \`\`\`bash
 cp .env.example .env
 \`\`\`
 
-Generate and run database migrations:
+`;
+            }
+            instructions += `Generate and run database migrations:
 \`\`\`bash
 # Generate migration files
 ${pmx} drizzle-kit generate
@@ -573,20 +826,24 @@ ${pmx} drizzle-kit studio
 
 `;
         } else if (config.orm === "prisma") {
-            instructions += `Copy environment file and update if needed:
+            if (!config.hasHostedDb) {
+                instructions += `Copy environment file and update if needed:
 \`\`\`bash
 cp .env.example .env
 \`\`\`
 
-Run database migrations:
+`;
+            }
+            instructions += `Run database migrations:
 \`\`\`bash
 ${pmx} prisma migrate dev
 \`\`\`
 
 `;
         }
-    } else {
-        instructions += `### ${config.database !== "none" || config.storage !== "none" ? "3" : "2"}. Environment Variables
+        stepNumber++;
+    } else if (!config.hasHostedDb) {
+        instructions += `### ${stepNumber}. Environment Variables
 
 Copy the example environment file:
 \`\`\`bash
@@ -596,11 +853,11 @@ cp .env.example .env
 Edit \`.env\` and update the values as needed.
 
 `;
+        stepNumber++;
     }
 
     // Development server
-    const lastStep = config.database !== "none" || config.storage !== "none" ? "4" : config.database !== "none" && config.orm !== "none" ? "3" : "2";
-    instructions += `### ${lastStep}. Start Development Server
+    instructions += `### ${stepNumber}. Start Development Server
 
 \`\`\`bash
 ${pm} run dev
@@ -619,9 +876,19 @@ ${pm} run dev
 `;
     }
 
-    if (config.database === "postgres" || config.database === "mysql") {
-        instructions += `- **Database**: localhost:${config.database === "postgres" ? "5432" : "3306"}
+    if (!config.hasHostedDb) {
+        const portMap = {
+            postgres: "5432",
+            mysql: "3306",
+            mariadb: "3306",
+            mongodb: "27017",
+            mssql: "1433"
+        };
+        const port = portMap[config.database as keyof typeof portMap];
+        if (port) {
+            instructions += `- **Database**: localhost:${port}
 `;
+        }
     }
 
     if (config.storage === "minio") {
@@ -643,7 +910,7 @@ ${pm} run build        # Build for production
 ${pm} run lint         # Run linter
 `;
 
-    if (config.database !== "none" || config.storage !== "none") {
+    if (((config.database !== "none" && !config.hasHostedDb) || config.storage !== "none") && config.database !== "sqlite") {
         instructions += `
 # Docker Services
 ${pm} run docker:up    # Start services
@@ -686,13 +953,20 @@ ${config.realtime === "websocket" ? "- `apps/ws` - WebSocket server (Fastify + B
 4. Customize configuration as needed
 
 ## Troubleshooting
-
+${
+    !config.hasHostedDb && ((config.database !== "none" && config.database !== "sqlite") || config.storage !== "none")
+        ? `
 ### Docker services not starting?
 
 \`\`\`bash
 # Check if ports are already in use
-${config.database === "postgres" ? "lsof -i :5432\n" : config.database === "mysql" ? "lsof -i :3306\n" : ""}${config.storage === "minio" ? "lsof -i :9000\nlsof -i :9001\n" : ""}
-# Stop and remove containers
+${
+    config.database === "postgres" ? "lsof -i :5432\n" :
+    config.database === "mysql" ? "lsof -i :3306\n" :
+    config.database === "mariadb" ? "lsof -i :3306\n" :
+    config.database === "mongodb" ? "lsof -i :27017\n" :
+    config.database === "mssql" ? "lsof -i :1433\n" : ""
+}${config.storage === "minio" ? "lsof -i :9000\nlsof -i :9001\n" : ""}# Stop and remove containers
 docker compose down -v
 # Start fresh
 docker compose up
@@ -704,7 +978,19 @@ Make sure:
 - Docker services are running (\`docker compose ps\`)
 - Environment variables in \`.env\` match docker-compose.yml
 - Database is ready (check with \`${pm} run docker:logs\`)
+`
+        : config.hasHostedDb
+          ? `
+### Database connection issues?
 
+Make sure:
+- Your hosted database is accessible from your development machine
+- The connection string in \`.env\` is correct
+- Your database firewall allows connections from your IP
+- The database credentials are valid
+`
+          : ""
+}
 ### Need help?
 
 Run \`${pm} run setup\` to see this guide again.
