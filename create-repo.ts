@@ -396,7 +396,11 @@ async function generateConfigs(projectPath: string, config: ProjectConfig) {
         version: "0.1.0",
         private: true,
         type: "module" as const,
-        packageManager: `${config.packageManager}@latest`,
+        packageManager: config.packageManager === "bun" 
+            ? "bun@1.3.0"
+            : config.packageManager === "pnpm"
+              ? "pnpm@9.14.4"
+              : "npm@10.9.2",
         scripts: config.monorepo
             ? {
                   dev: "turbo run dev --parallel",
@@ -468,6 +472,9 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
     }
 
     await fs.writeFile(path.join(projectPath, ".env.example"), envExample.trim());
+    
+    // Also create .env file for local development
+    await fs.writeFile(path.join(projectPath, ".env"), envExample.trim());
 
     // Generate SETUP.md
     await generateSetupInstructions(projectPath, config);
