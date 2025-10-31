@@ -117,6 +117,7 @@ bun run add:websocket
 ```
 
 This will:
+
 - Add the WebSocket service to `apps/ws`
 - Update your frontend with realtime functionality
 - Configure environment variables

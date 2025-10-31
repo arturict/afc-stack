@@ -10,7 +10,7 @@ export default function Home() {
         fetch("/api/todos")
             .then((r) => r.json())
             .then(setTodos);
-        
+
         // WebSocket for realtime updates
         const socket = new WebSocket(process.env.NEXT_PUBLIC_WS_URL! + "/ws");
         socket.onmessage = (ev) => {

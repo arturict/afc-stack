@@ -5,15 +5,18 @@ Dieses Dokument beschreibt die durchgeführten Updates basierend auf der aktuell
 ## Zusammenfassung der Änderungen
 
 ### 1. **Turborepo Konfiguration** (`turbo.json`)
+
 - ✅ Cache-Verhalten für `dev` Task korrigiert (`cache: false`, `persistent: true`)
 - ✅ Next.js Cache-Ordner explizit ausgeschlossen (`!.next/cache/**`)
 - ✅ Test und Lint Tasks mit korrekten Dependencies konfiguriert
 
 ### 2. **Drizzle Kit Konfiguration** (`drizzle.config.ts`)
+
 - ✅ Migrations Schema hinzugefügt für PostgreSQL Best Practices
 - ✅ Migration Tabelle und Schema explizit definiert
 
 ### 3. **NextAuth v5 Migration**
+
 - ✅ Neue `auth.ts` Datei erstellt mit korrektem NextAuth v5 Setup
 - ✅ Drizzle Adapter korrekt konfiguriert mit `session: { strategy: "jwt" }`
 - ✅ Resend Provider statt Email Provider verwendet
@@ -21,28 +24,34 @@ Dieses Dokument beschreibt die durchgeführten Updates basierend auf der aktuell
 - ✅ Schema um alle NextAuth Tabellen erweitert (users, accounts, sessions, verificationTokens, authenticators)
 
 ### 4. **Drizzle Schema Updates** (`packages/db/src/schema.ts`)
+
 - ✅ NextAuth-kompatible Tabellen hinzugefügt (PostgreSQL)
 - ✅ Korrekte Typisierung mit `AdapterAccountType`
 - ✅ Alle Foreign Keys und Composite Primary Keys definiert
 
 ### 5. **Drizzle Client** (`packages/db/src/client.ts`)
+
 - ✅ Schema in `drizzle()` übergeben für Relational Queries
 - ✅ Connection Pooling mit `max: 5` beibehalten
 
 ### 6. **Environment Variables**
+
 - ✅ `AUTH_SECRET` statt `NEXTAUTH_SECRET` (NextAuth v5)
 - ✅ `.env.example` mit allen benötigten Variablen aktualisiert
 - ✅ `env.ts` Validierung entsprechend angepasst
 
 ### 7. **TypeScript Konfiguration** (`tsconfig.json`)
+
 - ✅ `baseUrl: "."` hinzugefügt für korrekte Path Resolution
 - ✅ Paths Konfiguration bleibt unverändert
 
 ### 8. **Next.js Konfiguration** (`next.config.mjs`)
+
 - ✅ `outputFileTracingRoot` hinzugefügt für Monorepo-Support
 - ✅ Import/Export Syntax für ESM korrigiert
 
 ### 9. **PostCSS Konfiguration**
+
 - ✅ `postcss.config.js` → `postcss.config.cjs` umbenannt (ESM Kompatibilität)
 
 ## Migration Steps für bestehende Datenbanken
@@ -90,12 +99,14 @@ DISCORD_CLIENT_SECRET=
 ## Breaking Changes
 
 ### NextAuth v4 → v5
+
 - ❌ `NEXTAUTH_SECRET` → ✅ `AUTH_SECRET`
 - ❌ `import NextAuth from "next-auth"` in Route Handler → ✅ `import { handlers } from "@/auth"`
 - ❌ `Email` Provider → ✅ `Resend` Provider
 - Schema-Änderungen: Neue Tabellen für Authenticators (WebAuthn Support)
 
 ### Drizzle ORM
+
 - Relational Queries benötigen jetzt `schema` beim `drizzle()` Call
 - Migrations Schema sollte explizit konfiguriert werden
 
