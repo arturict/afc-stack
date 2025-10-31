@@ -98,11 +98,17 @@ async function main() {
                 results.database !== "none" && results.database !== "sqlite"
                     ? p.confirm({
                           message: `Do you have a hosted ${
-                              results.database === "postgres" ? "PostgreSQL" :
-                              results.database === "mysql" ? "MySQL" :
-                              results.database === "mariadb" ? "MariaDB" :
-                              results.database === "mongodb" ? "MongoDB" :
-                              results.database === "mssql" ? "SQL Server" : ""
+                              results.database === "postgres"
+                                  ? "PostgreSQL"
+                                  : results.database === "mysql"
+                                    ? "MySQL"
+                                    : results.database === "mariadb"
+                                      ? "MariaDB"
+                                      : results.database === "mongodb"
+                                        ? "MongoDB"
+                                        : results.database === "mssql"
+                                          ? "SQL Server"
+                                          : ""
                           } instance?`,
                           initialValue: false
                       })
@@ -117,7 +123,7 @@ async function main() {
                         mssql: "SQL Server"
                     };
                     const dbType = dbTypeMap[results.database as keyof typeof dbTypeMap];
-                    
+
                     // Show popular providers
                     const providersByDb = {
                         postgres: ["Supabase", "Neon", "Railway", "Render", "Vercel Postgres", "AWS RDS", "Other"],
@@ -126,12 +132,12 @@ async function main() {
                         mongodb: ["MongoDB Atlas", "Railway", "Render", "DigitalOcean", "Other"],
                         mssql: ["Azure SQL", "AWS RDS", "Railway", "Other"]
                     };
-                    
+
                     const providers = providersByDb[results.database as keyof typeof providersByDb];
-                    
+
                     const providerChoice = await p.select({
                         message: `Which ${dbType} provider are you using?`,
-                        options: providers.map(p => ({ value: p.toLowerCase().replace(/ /g, '-'), label: p }))
+                        options: providers.map((p) => ({ value: p.toLowerCase().replace(/ /g, "-"), label: p }))
                     });
 
                     if (providerChoice === Symbol.for("clack:cancel")) {
@@ -145,7 +151,8 @@ async function main() {
                             neon: "postgres://[user]:[password]@[endpoint].neon.tech/[dbname]",
                             railway: "postgres://postgres:[password]@[region].railway.app:5432/railway",
                             render: "postgres://[user]:[password]@[hostname].render.com/[dbname]",
-                            "vercel-postgres": "postgres://[user]:[password]@[endpoint].postgres.vercel-storage.com/[dbname]",
+                            "vercel-postgres":
+                                "postgres://[user]:[password]@[endpoint].postgres.vercel-storage.com/[dbname]",
                             "aws-rds": "postgres://[user]:[password]@[endpoint].rds.amazonaws.com:5432/[dbname]",
                             other: "postgres://user:password@host:5432/dbname"
                         },
@@ -160,20 +167,26 @@ async function main() {
                             railway: "mysql://mysql:[password]@[region].railway.app:3306/railway",
                             render: "mysql://[user]:[password]@[hostname].render.com/[dbname]",
                             "aws-rds": "mysql://[user]:[password]@[endpoint].rds.amazonaws.com:3306/[dbname]",
-                            digitalocean: "mysql://[user]:[password]@[host].db.ondigitalocean.com:25060/[dbname]?ssl-mode=REQUIRED",
+                            digitalocean:
+                                "mysql://[user]:[password]@[host].db.ondigitalocean.com:25060/[dbname]?ssl-mode=REQUIRED",
                             other: "mysql://user:password@host:3306/dbname"
                         },
                         mongodb: {
-                            "mongodb-atlas": "mongodb+srv://[username]:[password]@[cluster].mongodb.net/[dbname]?retryWrites=true&w=majority",
+                            "mongodb-atlas":
+                                "mongodb+srv://[username]:[password]@[cluster].mongodb.net/[dbname]?retryWrites=true&w=majority",
                             railway: "mongodb://mongo:[password]@[region].railway.app:27017",
                             render: "mongodb://[user]:[password]@[hostname].render.com/[dbname]",
-                            digitalocean: "mongodb://[user]:[password]@[host].db.ondigitalocean.com:27017/[dbname]?tls=true",
+                            digitalocean:
+                                "mongodb://[user]:[password]@[host].db.ondigitalocean.com:27017/[dbname]?tls=true",
                             other: "mongodb://user:password@host:27017/dbname"
                         },
                         mssql: {
-                            "azure-sql": "Server=[server].database.windows.net,1433;Database=[dbname];User Id=[user];Password=[password];Encrypt=true",
-                            "aws-rds": "Server=[endpoint].rds.amazonaws.com,1433;Database=[dbname];User Id=[user];Password=[password]",
-                            railway: "Server=[region].railway.app,1433;Database=railway;User Id=sqlserver;Password=[password]",
+                            "azure-sql":
+                                "Server=[server].database.windows.net,1433;Database=[dbname];User Id=[user];Password=[password];Encrypt=true",
+                            "aws-rds":
+                                "Server=[endpoint].rds.amazonaws.com,1433;Database=[dbname];User Id=[user];Password=[password]",
+                            railway:
+                                "Server=[region].railway.app,1433;Database=railway;User Id=sqlserver;Password=[password]",
                             other: "Server=host,1433;Database=dbname;User Id=user;Password=password"
                         }
                     };
@@ -366,18 +379,18 @@ async function copyTemplate(projectPath: string, config: ProjectConfig) {
     // Copy base structure based on monorepo choice
     if (config.monorepo) {
         await fs.copy(templateBase, projectPath);
-        
+
         // Add WebSocket service if selected
         if (config.realtime === "websocket") {
             const wsSource = path.join(process.cwd(), "cli-templates", "extras", "websocket", "ws");
             const wsTarget = path.join(projectPath, "apps", "ws");
             await fs.copy(wsSource, wsTarget);
-            
+
             // Replace page.tsx with WebSocket version
             const wsPageSource = path.join(process.cwd(), "cli-templates", "extras", "websocket", "page.tsx");
             const wsPageTarget = path.join(projectPath, "apps", "web", "src", "app", "page.tsx");
             await fs.copy(wsPageSource, wsPageTarget);
-            
+
             // Replace API route with WebSocket version
             const wsRouteSource = path.join(process.cwd(), "cli-templates", "extras", "websocket", "route.ts");
             const wsRouteTarget = path.join(projectPath, "apps", "web", "src", "app", "api", "todos", "route.ts");
@@ -396,11 +409,12 @@ async function generateConfigs(projectPath: string, config: ProjectConfig) {
         version: "0.1.0",
         private: true,
         type: "module" as const,
-        packageManager: config.packageManager === "bun" 
-            ? "bun@1.3.0"
-            : config.packageManager === "pnpm"
-              ? "pnpm@9.14.4"
-              : "npm@10.9.2",
+        packageManager:
+            config.packageManager === "bun"
+                ? "bun@1.3.0"
+                : config.packageManager === "pnpm"
+                  ? "pnpm@9.14.4"
+                  : "npm@10.9.2",
         scripts: config.monorepo
             ? {
                   dev: "turbo run dev --parallel",
@@ -421,7 +435,10 @@ async function generateConfigs(projectPath: string, config: ProjectConfig) {
     };
 
     // Add docker scripts if database or storage is used AND database is not hosted
-    if (((config.database !== "none" && !config.hasHostedDb) || config.storage !== "none") && config.database !== "sqlite") {
+    if (
+        ((config.database !== "none" && !config.hasHostedDb) || config.storage !== "none") &&
+        config.database !== "sqlite"
+    ) {
         pkg.scripts["docker:up"] = "docker compose up -d";
         pkg.scripts["docker:down"] = "docker compose down";
         pkg.scripts["docker:logs"] = "docker compose logs -f";
@@ -472,7 +489,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
     }
 
     await fs.writeFile(path.join(projectPath, ".env.example"), envExample.trim());
-    
+
     // Also create .env file for local development
     await fs.writeFile(path.join(projectPath, ".env"), envExample.trim());
 
@@ -917,7 +934,10 @@ ${pm} run build        # Build for production
 ${pm} run lint         # Run linter
 `;
 
-    if (((config.database !== "none" && !config.hasHostedDb) || config.storage !== "none") && config.database !== "sqlite") {
+    if (
+        ((config.database !== "none" && !config.hasHostedDb) || config.storage !== "none") &&
+        config.database !== "sqlite"
+    ) {
         instructions += `
 # Docker Services
 ${pm} run docker:up    # Start services
@@ -946,13 +966,17 @@ ${pmx} prisma generate       # Generate Prisma Client
 
 ## Project Structure
 
-${config.monorepo ? `This is a monorepo using Turborepo:
+${
+    config.monorepo
+        ? `This is a monorepo using Turborepo:
 
 - \`apps/web\` - Next.js frontend application
 ${config.realtime === "websocket" ? "- `apps/ws` - WebSocket server (Fastify + Bun)\n" : ""}- \`packages/db\` - Shared database schema and client
 - \`packages/*\` - Other shared packages
 
-` : ""}## Next Steps
+`
+        : ""
+}## Next Steps
 
 1. Start building your app in \`${config.monorepo ? "apps/web/src" : "src"}\`
 2. Define database schema in \`${config.monorepo ? "packages/db/src/schema.ts" : "src/db/schema.ts"}\`
@@ -968,11 +992,17 @@ ${
 \`\`\`bash
 # Check if ports are already in use
 ${
-    config.database === "postgres" ? "lsof -i :5432\n" :
-    config.database === "mysql" ? "lsof -i :3306\n" :
-    config.database === "mariadb" ? "lsof -i :3306\n" :
-    config.database === "mongodb" ? "lsof -i :27017\n" :
-    config.database === "mssql" ? "lsof -i :1433\n" : ""
+    config.database === "postgres"
+        ? "lsof -i :5432\n"
+        : config.database === "mysql"
+          ? "lsof -i :3306\n"
+          : config.database === "mariadb"
+            ? "lsof -i :3306\n"
+            : config.database === "mongodb"
+              ? "lsof -i :27017\n"
+              : config.database === "mssql"
+                ? "lsof -i :1433\n"
+                : ""
 }${config.storage === "minio" ? "lsof -i :9000\nlsof -i :9001\n" : ""}# Stop and remove containers
 docker compose down -v
 # Start fresh

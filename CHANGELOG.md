@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - Interactive CLI for project generation
 - Next.js 15 with App Router
 - Drizzle ORM with PostgreSQL
@@ -23,17 +24,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Coolify deployment configuration
 
 ### Changed
+
 - Migrated to Bun as primary package manager
 - Updated to React 18.3
 - Improved monorepo structure with Turborepo
 
 ### Fixed
+
 - WebSocket connection handling
 - Database connection pooling
 
 ## [0.1.0] - 2024-10-21
 
 ### Added
+
 - Initial release
 - Basic project structure
 - Core dependencies setup

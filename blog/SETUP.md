@@ -11,11 +11,13 @@ bun install
 ### 2. Setup Database
 
 Copy environment file and update if needed:
+
 ```bash
 cp .env.example .env
 ```
 
 Generate and run database migrations:
+
 ```bash
 # Generate migration files
 bunx drizzle-kit generate

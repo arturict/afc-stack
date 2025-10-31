@@ -23,10 +23,10 @@ Add the WebSocket service to your workspace:
 
 ```json
 {
-  "workspaces": [
-    "apps/*",     // Make sure this includes apps/ws
-    "packages/*"
-  ]
+    "workspaces": [
+        "apps/*", // Make sure this includes apps/ws
+        "packages/*"
+    ]
 }
 ```
 
@@ -37,6 +37,7 @@ bun install
 ```
 
 The WS service includes these dependencies:
+
 - `fastify` - Fast web framework
 - `@fastify/websocket` - WebSocket plugin
 - `pino` - Logger
@@ -80,6 +81,7 @@ bun run dev
 ```
 
 This starts:
+
 - Web app on port 3000
 - WebSocket service on port 4001
 
@@ -104,10 +106,12 @@ Browser                Next.js API              WS Service           Other Brows
 The service has two roles:
 
 **1. WebSocket Server** (`/ws`)
+
 - Maintains persistent connections with browsers
 - Broadcasts events to all connected clients
 
 **2. Internal HTTP API** (`/events/*`)
+
 - Receives events from Next.js API
 - Triggers WebSocket broadcasts
 
@@ -122,7 +126,7 @@ socket.onmessage = (event) => {
     const message = JSON.parse(event.data);
     if (message.type === "todo:created") {
         // Update UI with new todo
-        setTodos(prev => [message.payload, ...prev]);
+        setTodos((prev) => [message.payload, ...prev]);
     }
 };
 ```
@@ -174,15 +178,15 @@ Edit `apps/ws/src/server.ts`:
 ```typescript
 app.post("/events/user-updated", async (req, reply) => {
     const data = await req.body;
-    const message = JSON.stringify({ 
-        type: "user:updated", 
-        payload: data 
+    const message = JSON.stringify({
+        type: "user:updated",
+        payload: data
     });
-    
+
     for (const client of clients) {
         client.send(message);
     }
-    
+
     return reply.status(204).send();
 });
 ```
@@ -202,8 +206,8 @@ await fetch(WS_INTERNAL_URL + "/events/user-updated", {
 ```typescript
 socket.onmessage = (event) => {
     const msg = JSON.parse(event.data);
-    
-    switch(msg.type) {
+
+    switch (msg.type) {
         case "todo:created":
             // Handle todo creation
             break;
@@ -250,6 +254,7 @@ If you no longer need WebSocket:
 ## Alternative: Server-Sent Events (SSE)
 
 If you prefer SSE over WebSocket:
+
 - Simpler unidirectional communication
 - Built into HTTP, no special protocol
 - Better for simple notifications

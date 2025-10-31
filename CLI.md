@@ -102,6 +102,7 @@ bun run add:websocket
 ```
 
 This will:
+
 - Copy the WebSocket service to `apps/ws`
 - Update frontend components with realtime functionality
 - Configure API routes to broadcast events
