@@ -16,7 +16,7 @@
         "@auth/drizzle-adapter": "^1.7.2",
         "@aws-sdk/client-s3": "^3.679.0",
         "drizzle-orm": "^0.44.6",
-        "next": "^15.0.3",
+        "next": "^16.0.1",
         "next-auth": "5.0.0-beta.25",
         "posthog-js": "^1.173.1",
         "react": "^18.3.1",
